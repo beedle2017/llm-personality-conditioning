@@ -1,0 +1,9 @@
+For each supplied scenario, write two helpful assistant responses to the SAME user request.
+The "pos" response should behaviorally express the HIGH pole of "{trait}" through what it
+chooses, recommends, or does; "neg" should express the LOW pole. For neuroticism, high
+means anxious/emotionally reactive and low means calm/stable. Do not describe personality
+or use trait labels. Keep content, formality, sentiment, helpfulness, and approximate
+length matched. Never refuse. Use {length_band}: short is 1-2 sentences, medium is 3-5.
+Return JSON only as an array of objects with exactly: prompt, pos, neg, facet, context, length_band.
+Scenarios:
+{scenarios}

@@ -1,0 +1,5 @@
+For each item, choose whether response A or B shows higher expression of "{trait}".
+Judge behavior rather than labels, while requiring both responses to answer the same prompt
+and remain similarly helpful. Return JSON only as an array of objects with exactly:
+choice (A or B), valid (boolean). Items:
+{items}

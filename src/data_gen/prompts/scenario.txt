@@ -1,0 +1,5 @@
+Generate {count} distinct realistic user messages or scenarios for the Big Five trait "{trait}".
+Use facet "{facet}", context "{context}", and response length band "{length_band}".
+Each scenario must require a decision, advice, or plan. Avoid personality labels, tests,
+therapy/medical claims, refusals, and overlap with common benchmark scenarios.
+Return JSON only as an array of objects with exactly: prompt, context, facet, length_band.

@@ -1,0 +1,14 @@
+provider: gemini
+# Fill these model names from the current AI Studio model list.
+generator_model: "gemini-flash-lite-latest"
+judge_model: "gemini-3.5-flash-lite"
+base_url: https://generativelanguage.googleapis.com/v1beta/openai/
+api_key_env: GEMINI_API_KEY
+requests_per_minute: 10
+daily_request_quota: 1500
+max_retries: 4
+batch_pairs_per_call: 5
+n_workers: 2
+seed: 20261026
+prompt_similarity_threshold: 0.8
+behaviorbench_similarity_threshold: 0.8
