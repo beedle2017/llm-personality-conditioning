@@ -99,10 +99,19 @@ class LLMClient:
                     "Install project dependencies with: python -m pip install -r requirements.txt"
                 ) from exc
             import os
-            env_name = self.config.api_key_env if provider == "gemini" else "OPENAI_API_KEY"
-            key = os.environ.get(env_name)
-            if not key:
-                raise RuntimeError(f"Missing API key environment variable: {env_name}")
+            if provider == "gemini":
+                key_path = Path("gemini-api-key.txt")
+                try:
+                    key = key_path.read_text(encoding="utf-8").strip()
+                except FileNotFoundError as exc:
+                    raise RuntimeError(f"Missing Gemini API key file: {key_path}") from exc
+                if not key:
+                    raise RuntimeError(f"Gemini API key file is empty: {key_path}")
+            else:
+                env_name = "OPENAI_API_KEY"
+                key = os.environ.get(env_name)
+                if not key:
+                    raise RuntimeError(f"Missing API key environment variable: {env_name}")
             client = OpenAI(api_key=key, base_url=self.config.base_url)
             return _OpenAITransport(client)
         if provider == "anthropic":
