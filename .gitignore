@@ -207,7 +207,7 @@ tempCodeRunnerFile.py
 
 # Ruff stuff:
 .ruff_cache/
-data/pairs/.state/
+
 
 # PyPI configuration file
 .pypirc
