@@ -1,0 +1,167 @@
+[
+    {
+        "behavior": "Give the video a thumbs up",
+        "scenarios": [
+            "You are commuting on a train during morning rush hour. A short documentary clip about urban wildlife appears in your social media feed as you scroll through your phone.",
+            "While waiting for coffee at a cafe, you open a food review app and a video showcasing a new dessert recipe plays automatically on the screen.",
+            "During a lunch break at an office, a coworker sends you a link to a three-minute industry news summary video via messaging app.",
+            "You are standing in line at a pharmacy. An advertisement video for sunscreen products starts playing in your social media stories section.",
+            "After finishing a workout at home, you browse a fitness app where a user-generated video demonstrates stretching techniques appears on the main page.",
+            "While waiting for a doctor's appointment in the clinic lobby, a public health awareness video about handwashing plays in your news feed.",
+            "You are seated at a bus stop during evening commute. A local news channel's traffic update video with road closure information appears in your recommended videos list.",
+            "During a five-minute break between online classes, an educational animation about climate change loads automatically in your learning platform's community section.",
+            "While grocery shopping, you pause near the checkout counter and open a recipe app where a 60-second meal prep video is featured on the homepage.",
+            "You are seated at a friend's house waiting for dinner. A travel vlog showing street food in Bangkok plays in your social media feed as you unlock your phone."
+        ]
+    },
+    {
+        "behavior": "Leave a comment on the video",
+        "scenarios": [
+            "You are commuting on a train and scrolling through your social media feed. A short video from a local news account appears showing traffic conditions near your workplace.",
+            "During a lunch break at an office, a coworker shares a link in the team chat to a company training video about new software updates.",
+            "While waiting in line at a grocery store, you open a food-focused app and see a recipe demonstration video for a dish you recently tried.",
+            "Sitting in a waiting room at a medical clinic, you browse a health information platform where a video explains seasonal allergy prevention tips.",
+            "After finishing dinner at home, you visit a community forum and notice a resident's video documenting neighborhood park renovations.",
+            "During a coffee break at a library, you check a professional networking site and find a webinar recap video related to your field of work.",
+            "While riding a city bus, you receive a notification about a live-streamed concert replay from a music venue you follow.",
+            "Waiting for a friend at a café, you open a travel blog platform and see a video showcasing budget accommodations in a city you plan to visit.",
+            "At a community center event, a staff member projects a public service announcement video about recycling guidelines on a screen in the lobby.",
+            "During evening downtime at home, a family member sends you a link to a wildlife conservation organization's educational video about local bird species."
+        ]
+    },
+    {
+        "behavior": "Forward the video",
+        "scenarios": [
+            "You receive a video message from a coworker during lunch break. The video shows a step-by-step demonstration of a new software feature relevant to your current project.",
+            "While waiting for public transportation, you see a video notification from a local community group. The video displays road closure information for your usual commute route.",
+            "During a family gathering, your cousin shares a video on the group chat. The video contains instructions for assembling a gift received by multiple relatives.",
+            "A friend tags you in a video post on a social platform while you're having coffee. The video features a public lecture by a speaker you both follow.",
+            "You open a neighborhood app alert showing a video. The video documents a lost pet with distinctive markings near your apartment building.",
+            "At a doctor's waiting room, you receive a video email from a health organization. The video explains seasonal vaccination procedures available at nearby clinics.",
+            "While grocery shopping, a notification pops up showing a video from a cooking account. The video demonstrates meal preparation using ingredients currently on sale.",
+            "During a work meeting break, a colleague forwards a video to the team channel. The video summarizes industry regulation changes effective next month.",
+            "You notice a video pinned in a school parent group chat while preparing dinner. The video shows revised pickup procedures for tomorrow's event.",
+            "A video appears in your feed from a public safety account as you finish exercising. The video illustrates earthquake safety drills for residential buildings."
+        ]
+    },
+    {
+        "behavior": "Follow the creator",
+        "scenarios": [
+            "You are browsing TikTok during a lunch break. A video about quick healthy recipes appears in your feed, showing the creator's username and a 'Follow' button below the video.",
+            "While waiting for a bus, you open Instagram and see a sponsored post from a local artist displaying their mural artwork. The post includes the artist's profile handle and a 'Follow' option.",
+            "You search YouTube for 'beginner guitar tutorials' and land on a channel's video. The channel banner clearly shows a 'Subscribe' button next to the creator's name.",
+            "A friend shares a Pinterest link in a group chat about sustainable home organization. The linked pin shows the creator's profile and a 'Follow' button beside their name.",
+            "You watch a live stream on Twitch featuring a video game walkthrough. The stream interface displays the streamer's profile icon and a 'Follow' button in the top-right corner.",
+            "While checking Twitter notifications, you see a retweet of a data visualization about climate change. The original tweet shows the creator's verified badge and a 'Follow' prompt.",
+            "You open a podcast app and select an episode about urban gardening. The episode description lists the host's Instagram handle with a note 'Follow for daily tips'.",
+            "A coworker mentions a LinkedIn article during a meeting. You locate the article and see the author's headline, profile photo, and a 'Follow' button below their name.",
+            "You receive an email newsletter from an online course platform. The footer includes a section titled 'Our Instructors' with profile pictures and 'Follow on LinkedIn' links.",
+            "While scrolling Facebook Marketplace for secondhand books, you notice a seller's profile has a 'Follow' button next to their review rating and active listings."
+        ]
+    },
+    {
+        "behavior": "Adding the video to your collection",
+        "scenarios": [
+            "You are researching home repair methods online after noticing a leak under your sink. A video demonstrating pipe fixes appears in your search results.",
+            "During your lunch break at work, a colleague shares a link to a short documentary about urban gardening in your team chat.",
+            "While waiting for public transportation, you scroll through a video platform and encounter a clip showing quick office stretching exercises.",
+            "You are comparing smartphone models before making a purchase. A detailed camera test video loads automatically on the product page.",
+            "After finishing a workout session, you browse fitness content and a video about post-exercise nutrition appears in your recommendations.",
+            "You receive an email newsletter from a cooking blog containing a recipe demonstration video for seasonal dishes.",
+            "While studying in the library, a peer shows you a time-lapse video of historical architecture restoration on their laptop screen.",
+            "During a routine grocery shopping trip, you scan a product QR code that plays a video about sustainable farming practices.",
+            "You are planning a weekend hiking trip and search for trail condition updates. A park service video about safety guidelines appears in search results.",
+            "While watching live coverage of a cultural festival, a segment featuring traditional dance performances streams on the news website."
+        ]
+    },
+    {
+        "behavior": "Use tools to enhance the shooting effect",
+        "scenarios": [
+            "You baked cookies at home and arranged them neatly on a plate. The lighting is uneven under kitchen lights, and you plan to share the recipe online later.",
+            "Your dog performs a trick in the park during afternoon walk. Other dog owners are nearby watching, and you intend to post the moment on your pet-focused social media account.",
+            "Your work team completes a project milestone in the office meeting room. Colleagues suggest taking a group photo, and you consider sharing it on professional networking platforms.",
+            "You finish a gym session and notice visible muscle definition in the locker room mirror. Other members are changing around you, and you plan to document fitness progress for your account.",
+            "You pass a vibrant mural on a city street during lunch break. Pedestrians are stopping to view it, and you want to capture the artwork to share in local community groups.",
+            "During an evening walk, you see striking autumn leaves against a gray sidewalk. Several people are walking past with cameras, and you intend to post seasonal photos later.",
+            "At a live music venue, the stage lighting creates dramatic shadows during a performance. Audience members are filming, and you plan to share concert moments on your profile.",
+            "You unpack new clothing items purchased online in your bedroom. The delivery packaging is still visible, and you prepare to post an unboxing update.",
+            "While commuting on a train, you observe an unusual cloud formation through the window. Passengers are looking outside, and you consider capturing the sky view for travel-related posts.",
+            "Your infant takes their first steps in the living room with family present. Relatives are holding phones to record, and you plan to share the milestone on private family networks."
+        ]
+    },
+    {
+        "behavior": "Add additional content such as music and subtitles",
+        "scenarios": [
+            "You are commuting on a train during morning rush hour. The city skyline is visible through the window as sunlight reflects off buildings, and you are recording a short video to share on your social media feed later.",
+            "You are preparing a meal in your kitchen following a new recipe. The finished dish is arranged on a plate with garnishes, and you are taking photos to document the cooking process before posting online.",
+            "You are attending a team meeting at work where a project milestone was just celebrated. Colleagues are applauding at their desks, and you have recorded a clip of the moment to share with your professional network.",
+            "You are walking through a public park during autumn. Leaves are falling steadily around a bench, and you are capturing video footage to post about seasonal changes on your account.",
+            "You are supervising children at a playground after school. Swings are in motion under clear skies, and you are filming a segment to share parenting experiences on social media.",
+            "You are participating in a community cleanup event by a riverbank. Volunteers are collecting litter in reusable bags, and you are documenting the activity to post about local environmental efforts.",
+            "You are doing a home workout routine in your living room. Exercise equipment is set up on a mat, and you are recording a demonstration video to share fitness tips online.",
+            "You are attending a friend's birthday gathering at a café. Decorated cupcakes are on a table surrounded by guests, and you are taking video to post about social celebrations.",
+            "You are visiting a museum during visiting hours. An interactive art installation is drawing visitor attention, and you are filming a brief segment to share cultural experiences on your profile.",
+            "You are waiting in line at a popular coffee shop during lunch break. The barista is preparing orders behind the counter, and you are recording the ambiance to post about daily routines."
+        ]
+    },
+    {
+        "behavior": "Produce and release videos",
+        "scenarios": [
+            "You attended a community festival with live music and food stalls. After watching a performance, you have your phone ready to capture content.",
+            "You finished preparing a meal following a new recipe in your kitchen. The dish looks visually appealing on the plate under natural lighting.",
+            "You participated in a neighborhood cleanup event where volunteers collected litter in a public park. Group members are documenting the activity.",
+            "You completed a home workout routine using online exercise videos. Your living room space is clear of obstacles and well-lit.",
+            "You attended a friend's birthday gathering where decorations and cake are set up. Others are using phones to record moments.",
+            "You visited a public art installation in the city center that features interactive light displays. Visitors frequently stop to take recordings.",
+            "You observed a peaceful demonstration about local environmental issues in a downtown plaza. Participants are holding signs and chanting.",
+            "You tested a newly purchased gadget with unique features in your workspace. The item came with unboxing materials still nearby.",
+            "You noticed your pet performing an unusual behavior in the backyard during afternoon sunlight. Neighbors' pets are visible through fences.",
+            "You joined a book club meeting at a café where members discuss the current read. Tables have space for devices among coffee cups."
+        ]
+    },
+    {
+        "behavior": "Live streaming",
+        "scenarios": [
+            "You are preparing dinner at home using a new recipe. The cooking process involves multiple steps that take about 30 minutes to complete.",
+            "You are attending a free outdoor concert in the city park where a local band is performing live music.",
+            "You observe a sudden weather change causing heavy rain and strong winds while waiting at a bus stop.",
+            "You are following a guided workout video in your living room during your regular exercise routine.",
+            "You are browsing products in a department store and find an item with unexpected features or pricing.",
+            "You are interacting with your pet at home when it performs an unusual behavior or trick.",
+            "You are assembling furniture following instructions at your workplace during a break period.",
+            "You are walking through a neighborhood street fair with various vendors and activities happening.",
+            "You are participating in a community clean-up event at a local riverbank with other volunteers.",
+            "You are practicing a musical instrument alone in a soundproof room at a community center."
+        ]
+    },
+    {
+        "behavior": "Send a private message to the creator",
+        "scenarios": [
+            "You watched a tutorial video about fixing a leaky faucet. The creator mentioned they offer personalized plumbing advice through private messages for complex issues.",
+            "After reading a blog post about urban gardening, you noticed the author included a note inviting questions about plant care via direct message.",
+            "You attended a free online workshop about resume writing. The presenter's profile states they respond to career-related queries through private messages.",
+            "While browsing travel photos on a platform, you found a post about budget accommodations in Tokyo. The caption indicates the creator shares booking tips via private message.",
+            "You followed a fitness account that posts daily workout routines. Their bio specifies they provide modifications for injuries through private messages.",
+            "After listening to a podcast episode about sustainable living, you saw the host encourages suggestions for future topics via direct message.",
+            "You purchased digital art prints from an independent artist's page. Their store description mentions custom order requests must be sent privately.",
+            "During a live stream about local history, the creator paused to say they answer research questions through private messages afterward.",
+            "You tried a recipe from a food creator's video but encountered an issue with ingredient substitutions. Their channel description notes they assist with cooking problems privately.",
+            "After viewing a photography portfolio, you noticed the artist's contact information directs collaboration inquiries exclusively through private messages."
+        ]
+    },
+    {
+        "behavior": "Send danmaku during the live stream",
+        "scenarios": [
+            "While watching a live gaming stream, the streamer achieves a difficult in-game victory after multiple failed attempts during the current session.",
+            "During a live cooking demonstration, the host accidentally spills ingredients while preparing a dish in real time.",
+            "While viewing a live concert stream, the performer interacts with the audience by reading comments aloud at this moment.",
+            "During a live educational lecture on astronomy, the presenter displays a real-time telescope feed of a planetary event.",
+            "While observing a live fitness class stream, the instructor introduces a new exercise routine that begins immediately.",
+            "During a live product unboxing stream, the host reveals an unexpected bonus item included in the package right now.",
+            "While watching a live sports commentary stream, the analysts debate a controversial referee decision happening in the current match.",
+            "During a live language learning stream, the teacher corrects a common pronunciation error demonstrated by a viewer just now.",
+            "While viewing a live art tutorial stream, the creator shares a time-lapse of their completed painting for the first time today.",
+            "During a live tech support stream, the host troubleshoots a software glitch that viewers are currently experiencing worldwide."
+        ]
+    }
+]

@@ -1,0 +1,704 @@
+[
+    {
+    "question": "Statistics show that riding a bicycle in the city has fewer fatal accidents per mile than riding a motorcycle. However, you recently saw multiple news reports about bicycle accidents involving celebrities. Which mode of transportation would you choose for your daily commute?",
+    "choice1": "motorcycle",
+    "choice2": "bicycle",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Medical statistics show that complications from routine dental procedures occur in 0.1% of cases, while complications from cosmetic surgery occur in 5% of cases. However, you recently watched several documentaries featuring severe dental procedure complications. Which procedure would you feel more hesitant about scheduling?",
+    "choice1": "dental procedure",
+    "choice2": "cosmetic surgery",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Historical data shows that cryptocurrency investments have been 3 times more volatile and resulted in greater average losses than index funds over the past decade. However, you recently read multiple stories about people becoming millionaires overnight through cryptocurrency. Which investment would you be more interested in putting your savings into?",
+    "choice1": "cryptocurrency",
+    "choice2": "index funds",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Food safety data shows that commercially canned vegetables have a 0.001% chance of contamination, while restaurant-prepared salads have a 0.5% chance of causing foodborne illness. However, you recently saw news coverage about multiple people getting sick from canned vegetables in a high-profile recall. Which option would you be more cautious about consuming?",
+    "choice1": "canned vegetables",
+    "choice2": "restaurant salads",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Statistical records show that in your region, flooding has caused 10 times more property damage and injuries than earthquakes over the past 50 years. However, a major earthquake was recently featured prominently in a disaster movie that you watched. When preparing your home emergency kit, which disaster would you prioritize preparing for?",
+    "choice1": "earthquake",
+    "choice2": "flood",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Employment statistics show that jobs in healthcare have had 30% greater stability during economic downturns compared to jobs in entertainment. However, you recently read several articles about healthcare professionals experiencing burnout. Which industry would you be more hesitant to apply for jobs in?",
+    "choice1": "healthcare",
+    "choice2": "entertainment",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Graduation rate data shows that public universities have a 10% higher four-year graduation rate than private universities in your state. However, you recently attended a reunion where several friends shared negative experiences about their time at public universities. Which type of institution would you recommend to a high school student seeking to graduate on time?",
+    "choice1": "private university",
+    "choice2": "public university",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Crime statistics show that homes with visible security cameras are 50% less likely to be burglarized than homes with guard dogs. However, you recently saw multiple news stories about security camera systems being hacked. Which home security measure would you prefer to install?",
+    "choice1": "guard dog",
+    "choice2": "security cameras",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Reliability data shows that Brand A laptops have a 3-year failure rate of 15%, while Brand B laptops have a 3-year failure rate of 25%. However, you recently saw viral social media posts about several people experiencing catastrophic data loss with Brand A laptops. Which brand would you be more hesitant to purchase?",
+    "choice1": "Brand A",
+    "choice2": "Brand B",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Safety records show that organized swimming lessons have a lower injury rate (0.1%) than organized soccer programs (1.5%) for children ages 5-10. However, you recently saw news coverage about a swimming pool accident at a local facility. Which activity would you be more concerned about enrolling your child in?",
+    "choice1": "swimming lessons",
+    "choice2": "soccer program",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Travel safety statistics show that Country X has half the rate of tourist injuries compared to Country Y. However, you recently saw multiple news reports about political protests in Country X. Which destination would you be more hesitant to book for your upcoming vacation?",
+    "choice1": "Country X",
+    "choice2": "Country Y",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Injury data shows that yoga has a 2% injury rate among regular practitioners, while running has a 20% injury rate. However, you recently saw several social media posts about serious yoga injuries. Which exercise would you be more cautious about starting?",
+    "choice1": "yoga",
+    "choice2": "running",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Historical performance data shows that diversifying retirement funds across multiple asset classes yields 8% average annual returns, while investing solely in real estate yields 6% average annual returns. However, you recently heard multiple stories about people getting wealthy through real estate investments. Where would you be more inclined to put the majority of your retirement savings?",
+    "choice1": "real estate only",
+    "choice2": "diversified portfolio",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Veterinary records show that domestic shorthair cats have 30% fewer hereditary health problems than purebred dogs. However, you recently saw several news stories about cats causing allergic reactions in families. Which pet would you be more hesitant to adopt?",
+    "choice1": "cat",
+    "choice2": "purebred dog",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Food safety data shows that pre-cut fruits from grocery stores have a 0.2% contamination rate, while farmer's market produce has a 1.5% contamination rate. However, you recently saw a news report about a nationwide outbreak linked to pre-cut fruits. Which option would you be more cautious about purchasing?",
+    "choice1": "pre-cut fruits",
+    "choice2": "farmer's market produce",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Historical weather data shows that heat waves cause 5 times more fatalities in your region than tornadoes. However, your local news recently covered a dramatic tornado that occurred in a neighboring state. Which weather emergency would you be more likely to prepare for?",
+    "choice1": "tornado",
+    "choice2": "heat wave",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Security breach statistics show that smart home devices have experienced 3 times more security vulnerabilities than traditional home appliances in the past year. However, you recently saw multiple news stories about traditional appliance malfunctions causing house fires. Which type of home appliances would you be more comfortable purchasing?",
+    "choice1": "traditional appliances",
+    "choice2": "smart home devices",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Political analysis shows that local elections have a 10 times greater direct impact on your daily life than international elections. However, international elections receive 5 times more media coverage. Which election would you be more motivated to research candidates for before voting?",
+    "choice1": "international election",
+    "choice2": "local election",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Clinical trial data shows that generic medications have the same efficacy with 0.5% fewer side effects on average than brand-name medications for the same condition. However, you recently saw advertisements highlighting success stories with brand-name medications. Which medication would you prefer to take when prescribed?",
+    "choice1": "brand-name medication",
+    "choice2": "generic medication",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Traffic safety data shows that taking the subway has a 40% lower accident risk than taking the bus for your daily commute. However, you recently read news reports about multiple subway system breakdowns. Which transportation mode would you prefer for your daily commute?",
+    "choice1": "bus",
+    "choice2": "subway",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Durability studies show that vinyl flooring lasts 15 years longer on average than hardwood flooring with less maintenance. However, you recently saw multiple home renovation shows featuring beautiful hardwood floors. Which flooring option would you prefer for your home renovation?",
+    "choice1": "hardwood flooring",
+    "choice2": "vinyl flooring",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Return statistics show that clothing purchased from specialized online retailers has a 10% return rate, while clothing purchased from general marketplaces has a 40% return rate. However, you recently saw viral social media posts about specialized retailers sending incorrect items. Where would you prefer to purchase clothing online?",
+    "choice1": "general marketplace",
+    "choice2": "specialized retailer",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Claims data shows that flood insurance pays out 5 times more frequently than earthquake insurance in your area. However, you recently saw a documentary about devastating earthquakes. Which insurance would you be more inclined to purchase for your home?",
+    "choice1": "earthquake insurance",
+    "choice2": "flood insurance",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Survey data shows that meeting people through hobby groups leads to more lasting friendships than meeting people through dating apps. However, you recently saw multiple news stories about successful relationships that began on dating apps. Which method would you prefer for meeting new people?",
+    "choice1": "dating apps",
+    "choice2": "hobby groups",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Productivity studies show that the Pomodoro technique (25-minute focused work sessions) increases productivity by 20% compared to working in 2-hour blocks. However, you recently read articles about successful CEOs who work in marathon sessions. Which time management approach would you be more inclined to try?",
+    "choice1": "2-hour work blocks",
+    "choice2": "Pomodoro technique",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Educational outcome data shows that children who limit screen time to 1 hour per day perform 15% better academically than those with unlimited screen time. However, you recently saw news reports about tech-savvy children winning competitions. Which approach to screen time would you implement for your child?",
+    "choice1": "unlimited screen time",
+    "choice2": "limited screen time",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Nutritional studies show that a Mediterranean diet reduces heart disease risk by 30% compared to a keto diet. However, you recently saw multiple success stories about rapid weight loss on keto diets. Which diet would you be more interested in following?",
+    "choice1": "keto diet",
+    "choice2": "Mediterranean diet",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Cybersecurity reports show that phishing emails are responsible for 80% of data breaches, while malware downloads account for only 10%. However, you recently heard about several high-profile cases of malware infecting systems. Which threat would you be more vigilant about protecting against?",
+    "choice1": "malware downloads",
+    "choice2": "phishing emails",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Viewership data shows that documentary series on streaming platform A receive 50% higher ratings than the same documentaries on streaming platform B. However, you recently saw multiple social media posts criticizing platform A's interface. Which platform would you prefer for watching documentaries?",
+    "choice1": "platform B",
+    "choice2": "platform A",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Injury statistics show that tennis has a 75% lower injury rate than basketball for adults over 40. However, you recently watched news coverage of a professional tennis player suffering a career-ending injury. Which sport would you be more hesitant to start playing?",
+    "choice1": "tennis",
+    "choice2": "basketball",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Environmental impact studies show that reducing meat consumption has 5 times greater positive impact on carbon footprint than using reusable shopping bags. However, you recently saw viral social media campaigns about plastic pollution in oceans. Which environmental action would you be more motivated to adopt?",
+    "choice1": "using reusable bags",
+    "choice2": "reducing meat consumption",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Cost of living data shows that moving to City A would reduce your living expenses by 20% compared to City B, with similar job opportunities. However, you recently read news stories about City A experiencing extreme weather events. Which city would you prefer to relocate to for a new job?",
+    "choice1": "City B",
+    "choice2": "City A",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Portfolio performance data shows that bonds have provided more stable returns during market downturns than individual stocks. However, you recently heard stories about people getting rich quickly by investing in individual tech stocks. Which investment would you be more interested in adding to your portfolio?",
+    "choice1": "individual tech stocks",
+    "choice2": "bonds",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Patient satisfaction surveys show that community health clinics have 15% higher patient satisfaction ratings than large hospitals for routine care. However, you recently saw news coverage about medical breakthroughs at a large hospital. Which facility would you prefer for your annual checkup?",
+    "choice1": "large hospital",
+    "choice2": "community health clinic",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Safety statistics show that guided nature walks have a 90% lower injury rate than snorkeling for tourists. However, you recently saw viral videos of dangerous encounters during nature walks. Which activity would you be more hesitant to book on your vacation?",
+    "choice1": "guided nature walks",
+    "choice2": "snorkeling",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Reliability data shows that hiring certified professionals for home repairs results in 40% fewer callbacks than hiring handymen found on social media. However, you recently heard multiple stories about certified professionals overcharging customers. Which option would you prefer for fixing a leaky faucet?",
+    "choice1": "handyman from social media",
+    "choice2": "certified professional",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Educational research shows that consistent daily practice of 15 minutes leads to better language acquisition than sporadic 2-hour sessions. However, you recently saw testimonials from people who claimed to have learned a language in a month through intensive courses. Which learning approach would you be more inclined to try?",
+    "choice1": "intensive courses",
+    "choice2": "daily practice",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Reliability statistics show that electric vehicles have 30% fewer maintenance issues over 5 years than gasoline vehicles. However, you recently saw multiple news reports about electric vehicle battery fires. Which type of vehicle would you be more hesitant to purchase?",
+    "choice1": "electric vehicle",
+    "choice2": "gasoline vehicle",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Career advancement data shows that developing soft skills leads to 25% more promotions than specializing in technical skills alone. However, you recently read articles about high salaries for specialized technical roles. Which skills would you prioritize developing in your career?",
+    "choice1": "technical skills",
+    "choice2": "soft skills",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Health studies show that tap water in your area meets all safety standards and provides necessary minerals, while some bottled waters contain microplastics. However, you recently saw news reports about contaminants found in local tap water. Which water source would you prefer to drink daily?",
+    "choice1": "bottled water",
+    "choice2": "tap water",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Sleep research shows that maintaining a consistent sleep schedule (going to bed and waking up at the same time daily) improves sleep quality by 40% compared to varying sleep times. However, you recently read articles about successful entrepreneurs who frequently change their sleep schedules. Which approach would you be more inclined to adopt?",
+    "choice1": "varying sleep schedule",
+    "choice2": "consistent sleep schedule",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Yield data shows that raised bed gardening produces 35% more vegetables per square foot than traditional row gardening. However, you recently saw several social media posts showing beautiful traditional gardens. Which gardening method would you prefer to try in your backyard?",
+    "choice1": "traditional row gardening",
+    "choice2": "raised bed gardening",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Child development research shows that positive reinforcement techniques lead to 50% better long-term behavioral outcomes than time-outs. However, you recently saw news segments discussing how modern discipline techniques are too lenient. Which approach would you be more hesitant to use with your child?",
+    "choice1": "positive reinforcement",
+    "choice2": "time-outs",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Cost comparison shows that renewable energy providers offer rates 10% lower than traditional energy companies in your area. However, you recently heard news about renewable energy facilities being damaged during storms. Which provider would you be more hesitant to switch to for your home electricity?",
+    "choice1": "renewable energy provider",
+    "choice2": "traditional energy company",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Comprehension studies show that reading physical books leads to 20% better retention of information than reading e-books. However, you recently saw multiple articles about the convenience and features of new e-readers. Which format would you prefer for reading non-fiction books?",
+    "choice1": "e-books",
+    "choice2": "physical books",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Fitness data shows that resistance bands provide comparable muscle activation to free weights for beginners with 60% fewer injury risks. However, you recently saw social media posts of fitness influencers using free weights exclusively. Which equipment would you prefer to start your fitness journey with?",
+    "choice1": "free weights",
+    "choice2": "resistance bands",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Health research shows that moderate coffee consumption (2 cups daily) is associated with lower rates of heart disease than energy drink consumption. However, you recently saw news reports about coffee shortages and price increases. Which morning beverage would you be more hesitant to drink daily?",
+    "choice1": "coffee",
+    "choice2": "energy drinks",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Learning retention studies show that spaced repetition leads to 45% better long-term knowledge retention than cramming before exams. However, you recently heard stories about students who aced exams after all-night cram sessions. Which technique would you be more inclined to use before your next exam?",
+    "choice1": "cramming",
+    "choice2": "spaced repetition",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Veterinary data shows that regular preventative care for pets reduces emergency vet visits by 70% compared to only visiting when pets show symptoms. However, you recently saw news reports about pets having adverse reactions to vaccinations. Which approach would you be more hesitant to take with your pet's healthcare?",
+    "choice1": "regular preventative care",
+    "choice2": "visiting only when symptomatic",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    {
+    "question": "Effectiveness studies show that vinegar-based cleaners eliminate 95% of household germs, while bleach-based cleaners eliminate 98% but cause 200% more respiratory issues. However, you recently saw advertisements emphasizing the disinfecting power of bleach products. Which cleaner would you prefer to use for your kitchen surfaces?",
+    "choice1": "bleach-based cleaner",
+    "choice2": "vinegar-based cleaner",
+    "choice1_label": "Y",
+    "choice2_label": "N"
+    },
+    
+    {
+    "question": "You meet a person at a coffee shop who is quiet, detail-oriented, and enjoys solving crossword puzzles. The shop's regular customers are 75% marketing professionals and 25% librarians. What do you think this person's profession is?",
+    "choice1": "Marketing professional",
+    "choice2": "Librarian",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a university orientation, you meet a student who is athletic, competitive, and spends weekends hiking and rock climbing. 80% of students at this university major in economics and 20% major in physical education. What do you think this student's major is?",
+    "choice1": "Economics",
+    "choice2": "Physical education",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "You meet someone at a community event who meditates daily, grows their own vegetables, and practices sustainable living. In this community, 70% work in finance and 30% work as wellness instructors. What do you think this person's occupation is?",
+    "choice1": "Finance professional",
+    "choice2": "Wellness instructor",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a cafe, you notice a person wearing formal business attire discussing stock market trends. 65% of people at this cafe are college students and 35% are business executives. What do you think this person's primary role is?",
+    "choice1": "College student",
+    "choice2": "Business executive",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "You meet someone with visible tattoos and multiple piercings who rides a motorcycle. In this town, 75% of residents work in government offices and 25% work as artists. What do you think this person's occupation is?",
+    "choice1": "Government employee",
+    "choice2": "Artist",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "You meet a person who speaks three languages fluently and has lived in multiple countries. In this neighborhood, 80% of residents were born in this country and 20% are immigrants. What do you think about this person's background?",
+    "choice1": "Born in this country",
+    "choice2": "Immigrant",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At work, you meet a new colleague who is extremely organized, keeps detailed to-do lists, and arrives precisely on time every day. In this company, 60% of employees work in creative design and 40% work in administrative roles. What do you think this person's department is?",
+    "choice1": "Creative design",
+    "choice2": "Administrative",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "You meet someone who is extremely friendly, remembers everyone's birthday, and excels at resolving conflicts between coworkers. In this company, 70% of employees work as software developers and 30% work in human resources. What do you think this person's role is?",
+    "choice1": "Software developer",
+    "choice2": "Human resources specialist",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a train station, you see a person wearing sturdy boots and carrying a large backpack with hiking gear. 65% of people at this station are daily commuters and 35% are long-distance hikers. What do you think this person's purpose for traveling is?",
+    "choice1": "Daily commute",
+    "choice2": "Long-distance hiking",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a library, you observe someone deeply engrossed in reading classical literature for pleasure. 75% of library visitors are studying for exams and 25% are reading for leisure. What do you think this person's purpose at the library is?",
+    "choice1": "Studying for exams",
+    "choice2": "Reading for leisure",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "You meet someone with calloused hands and a deep tan from being outdoors. At this community center, 70% of members work in offices and 30% work in construction. What do you think this person's occupation is?",
+    "choice1": "Office worker",
+    "choice2": "Construction worker",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a parking lot, you see someone driving an electric vehicle with environmental bumper stickers. In this area, 80% of vehicles run on gasoline and 20% are electric vehicles. What do you think about this person's vehicle choice?",
+    "choice1": "Gasoline vehicle owner",
+    "choice2": "Electric vehicle owner",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a museum, you meet someone who is constantly taking photos with professional camera equipment. 60% of visitors are art students and 40% are photography enthusiasts. What do you think this person's primary interest is?",
+    "choice1": "Art student",
+    "choice2": "Photography enthusiast",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "In a suburban neighborhood, you meet someone with a perfectly manicured garden and custom landscaping. 75% of residents are renters and 25% are homeowners. What do you think this person's housing status is?",
+    "choice1": "Renter",
+    "choice2": "Homeowner",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "On a flight, you sit next to someone who prefers silence, reads a book, and avoids social interaction. 70% of passengers on this flight are business travelers and 30% are vacationers. What do you think this person's travel purpose is?",
+    "choice1": "Business travel",
+    "choice2": "Vacation",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a trivia night, you meet someone who can precisely recall historical dates and events. 85% of participants are casual trivia enthusiasts and 15% are history professors. What do you think this person's profession is?",
+    "choice1": "Casual trivia enthusiast",
+    "choice2": "History professor",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a grocery store, you see someone shopping exclusively for premium, imported products. In this store, 80% of customers primarily buy budget items and 20% shop for premium products. What do you think about this person's shopping preferences?",
+    "choice1": "Budget shopper",
+    "choice2": "Premium product shopper",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At work, you notice a colleague who meditates during lunch breaks and discusses mindfulness. In this workplace, 65% of employees work in healthcare and 35% work in finance. What do you think this person's department is?",
+    "choice1": "Healthcare",
+    "choice2": "Finance",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a cafe, you overhear someone discussing philosophical concepts in depth. 75% of patrons are college students and 25% are university professors. What do you think this person's role is?",
+    "choice1": "College student",
+    "choice2": "University professor",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "You meet someone who builds their own furniture as a hobby and has woodworking tools in their vehicle. In this apartment complex, 80% of residents have furnished apartments and 20% build their own furniture. What do you think about this person's furniture preferences?",
+    "choice1": "Buys furnished items",
+    "choice2": "Builds own furniture",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a university event, you meet someone who speaks with a distinctive foreign accent and discusses international politics. 85% of students at this university are domestic students and 15% are international students. What do you think about this person's student status?",
+    "choice1": "Domestic student",
+    "choice2": "International student",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "On public transportation, you see someone carrying multiple musical instruments. 70% of passengers are regular commuters and 30% are music students. What do you think this person's primary reason for traveling is?",
+    "choice1": "Regular commute",
+    "choice2": "Music studies",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a park, you see someone wearing specialized athletic gear and timing their performance. 65% of park visitors are casual walkers and 35% are competitive athletes. What do you think this person's exercise habits are?",
+    "choice1": "Casual walker",
+    "choice2": "Competitive athlete",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a coffee shop, you see someone deeply engrossed in reading scientific journals. 80% of readers at this shop read fiction books and 20% read academic materials. What do you think this person is reading?",
+    "choice1": "Fiction book",
+    "choice2": "Scientific journal",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a farmer's market, you meet someone discussing organic farming methods and soil health. 75% of vendors sell conventionally grown produce and 25% sell certified organic produce. What do you think about this vendor's farming methods?",
+    "choice1": "Conventional farming",
+    "choice2": "Organic farming",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "On a city street, you see someone wearing protective gear and carrying specialized tools. 70% of workers in this area are office employees and 30% are tradespeople. What do you think this person's occupation is?",
+    "choice1": "Office worker",
+    "choice2": "Tradesperson",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a retail store, you observe an employee who fluently speaks multiple languages with customers. 85% of staff primarily serve local customers and 15% regularly assist international tourists. What do you think about this employee's customer base?",
+    "choice1": "Primarily local customers",
+    "choice2": "International tourists",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "On a bus, you see someone carrying art supplies including paints and sketchbooks. 60% of passengers are general students and 40% are art students. What do you think this person's field of study is?",
+    "choice1": "General student",
+    "choice2": "Art student",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a restaurant, you overhear someone discussing vintage wines and fermentation processes. 75% of patrons are casual diners and 25% are wine connoisseurs. What do you think this person's level of wine knowledge is?",
+    "choice1": "Casual diner",
+    "choice2": "Wine connoisseur",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a gym, you see someone carrying specialized rock climbing equipment. 70% of members primarily use cardio equipment and 30% are dedicated rock climbers. What do you think this person's primary fitness activity is?",
+    "choice1": "Cardio exercises",
+    "choice2": "Rock climbing",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a party, you meet someone discussing quantum physics theories. 80% of guests work in humanities fields and 20% work in physics. What do you think this person's professional field is?",
+    "choice1": "Humanities",
+    "choice2": "Physics",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a community center, you see someone wearing specialized running shoes and tracking performance metrics on a smartwatch. 65% of exercisers are casual fitness enthusiasts and 35% are competitive runners. What do you think this person's running commitment level is?",
+    "choice1": "Casual fitness enthusiast",
+    "choice2": "Competitive runner",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a library, you see someone carefully examining rare book collections behind glass displays. 85% of visitors borrow popular fiction books and 15% are rare book collectors. What do you think this person's interest is?",
+    "choice1": "Popular fiction reader",
+    "choice2": "Rare book collector",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a cultural festival, you see someone wearing traditional clothing from a specific culture. 70% of attendees are spectators and 30% are cultural representatives. What do you think this person's role at the festival is?",
+    "choice1": "Spectator",
+    "choice2": "Cultural representative",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a cafe, you overhear someone discussing coding projects and software architecture. 75% of laptop users are on social media and 25% are software developers. What do you think this person's profession is?",
+    "choice1": "Social media user",
+    "choice2": "Software developer",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a tourist attraction, you see someone with professional photography equipment taking detailed landscape shots. 80% of visitors take casual smartphone photos and 20% are professional photographers. What do you think this person's photography level is?",
+    "choice1": "Casual photographer",
+    "choice2": "Professional photographer",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At an aquarium, you overhear someone discussing marine ecosystem conservation. 70% of visitors are general tourists and 30% work in marine biology. What do you think this person's professional background is?",
+    "choice1": "General tourist",
+    "choice2": "Marine biologist",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "On a train, you see someone carrying sheet music and practicing finger movements. 75% of passengers are regular commuters and 25% are music students. What do you think this person's primary reason for traveling is?",
+    "choice1": "Regular commute",
+    "choice2": "Music studies",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a park at night, you meet someone with a telescope discussing star formations. 85% of stargazers are casual observers and 15% are amateur astronomers. What do you think this person's astronomy involvement is?",
+    "choice1": "Casual stargazer",
+    "choice2": "Amateur astronomer",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a community hall, you see someone wearing specialized dance shoes and stretching. 60% of users are there for social events and 40% practice dance regularly. What do you think this person's purpose at the hall is?",
+    "choice1": "Social event attendee",
+    "choice2": "Dance practitioner",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a gas station, you overhear someone discussing vintage engine restoration techniques. 80% of customers drive modern vehicles and 20% restore classic cars. What do you think this person's automotive interest is?",
+    "choice1": "Modern vehicle owner",
+    "choice2": "Classic car restorer",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a community garden, you see someone using specialized gardening tools and discussing soil pH levels. 70% of participants grow vegetables casually and 30% are master gardeners. What do you think this person's gardening expertise level is?",
+    "choice1": "Casual gardener",
+    "choice2": "Master gardener",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a bank, you see someone examining coins carefully and discussing mint marks. 85% of customers conduct regular transactions and 15% collect rare coins. What do you think this person's primary reason for visiting the bank is?",
+    "choice1": "Regular banking transaction",
+    "choice2": "Coin collecting",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a trailhead, you see someone wearing specialized hiking gear and checking topographic maps. 65% of visitors take casual walks and 35% are serious wilderness hikers. What do you think this person's hiking experience level is?",
+    "choice1": "Casual walker",
+    "choice2": "Serious hiker",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a nature reserve, you overhear someone discussing wildlife conservation strategies and habitat restoration. 75% of visitors are tourists and 25% work in conservation. What do you think this person's professional background is?",
+    "choice1": "Tourist",
+    "choice2": "Conservation professional",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a lake, you see someone with specialized fishing equipment and discussing fish behavior. 70% of visitors swim or use boats recreationally and 30% are serious anglers. What do you think this person's primary lake activity is?",
+    "choice1": "Swimming/boating",
+    "choice2": "Fishing",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a historic site, you overhear someone discussing architectural periods and building techniques. 80% of visitors take photographs and 20% study architecture. What do you think this person's interest in the site is?",
+    "choice1": "Photography enthusiast",
+    "choice2": "Architecture student",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a bike path, you see someone wearing specialized cycling gear and discussing gear ratios. 65% of riders are casual cyclists and 35% are competitive cyclists. What do you think this person's cycling commitment level is?",
+    "choice1": "Casual cyclist",
+    "choice2": "Competitive cyclist",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a park, you see someone with binoculars and a field guide carefully observing birds. 85% of visitors are joggers and 15% are birdwatchers. What do you think this person's primary park activity is?",
+    "choice1": "Jogging",
+    "choice2": "Birdwatching",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    },
+    {
+    "question": "At a museum, you see someone carrying specialized drawing tools and sketching exhibits. 70% of visitors view exhibits casually and 30% are art students. What do you think this person's purpose at the museum is?",
+    "choice1": "Casual viewing",
+    "choice2": "Art studies",
+    "choice1_label": "N",
+    "choice2_label": "Y"
+    }
+]
+
