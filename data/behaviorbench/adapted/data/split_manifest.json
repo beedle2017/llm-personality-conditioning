@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "seed": 20261027,
+  "source_sha256": {
+    "risk-taking_v2.json": "196b4b568cd933c0ecf7542db811c8378c7ff2cfb4420b681e9b09ede5a07e9c",
+    "self-control_v2.json": "2b45beb48a2d2643f6bd420d0649192f3590e7169e6d9b5e8b4619502323e480",
+    "social_media_v2.json": "21899462a8cc222b7d155d7059eada56cf0c3992a611786bd4b7f8cb43692202",
+    "altruism_v2.json": "b9c677b0389f179abdf1816aa19cb064a2cc3f1c4d1a252af7292d0125ada17a",
+    "heuristic_v2.json": "ea92b76d4612ed5915aa215344d3229384f642dad08a272eac66f4f575126999"
+  },
+  "split_unit": "source behavior; heuristic questions grouped into two manually identified families",
+  "group_assignments": {
+    "A-b01": "development",
+    "A-b02": "test",
+    "A-b03": "development",
+    "A-b04": "test",
+    "A-b05": "development",
+    "A-b06": "development",
+    "A-b07": "test",
+    "A-b08": "development",
+    "A-b09": "development",
+    "A-b10": "development",
+    "C-b01": "development",
+    "C-b02": "development",
+    "C-b03": "test",
+    "C-b04": "test",
+    "C-b05": "development",
+    "C-b06": "development",
+    "C-b07": "development",
+    "C-b08": "test",
+    "C-b09": "development",
+    "C-b10": "development",
+    "E-b01": "test",
+    "E-b02": "development",
+    "E-b03": "test",
+    "E-b04": "development",
+    "E-b05": "development",
+    "E-b06": "development",
+    "E-b07": "development",
+    "E-b08": "development",
+    "E-b09": "development",
+    "E-b10": "test",
+    "E-b11": "development",
+    "N-availability": "development",
+    "N-representativeness": "test",
+    "O-b01": "development",
+    "O-b02": "development",
+    "O-b03": "development",
+    "O-b04": "development",
+    "O-b05": "development",
+    "O-b06": "test",
+    "O-b07": "development",
+    "O-b08": "test",
+    "O-b09": "test",
+    "O-b10": "development"
+  },
+  "counts": {
+    "Openness": {
+      "development": {
+        "items": 70,
+        "groups": 7
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Conscientiousness": {
+      "development": {
+        "items": 70,
+        "groups": 7
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Extraversion": {
+      "development": {
+        "items": 80,
+        "groups": 8
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Agreeableness": {
+      "development": {
+        "items": 70,
+        "groups": 7
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Neuroticism": {
+      "development": {
+        "items": 50,
+        "groups": 1
+      },
+      "test": {
+        "items": 50,
+        "groups": 1
+      }
+    }
+  },
+  "excluded_items": [],
+  "all_traits_primary_ready": false,
+  "status": "structurally_validated_semantic_review_pending",
+  "steering_examples": "Not supplied. Extract only from development or separately sourced data audited against test groups.",
+  "test_policy": "Freeze before any model-based selection; do not tune on test responses."
+}
