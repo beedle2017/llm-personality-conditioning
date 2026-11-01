@@ -1,0 +1,46 @@
+method,trait,layer,k,coeff,target_score,context,metric,value,ci_low,ci_high,n,seed
+caa,openness,16,7.289029121398926,0.0,3,casual conversation,dose_slope,0.5286458333333334,,,6,20261026
+caa,openness,16,7.289029121398926,0.0,3,decision-making,dose_slope,0.4529017857142857,,,7,20261026
+caa,openness,16,7.289029121398926,0.0,3,family,dose_slope,0.4763671875,,,8,20261026
+caa,openness,16,7.289029121398926,0.0,3,friendship,dose_slope,0.4917067307692307,,,13,20261026
+caa,openness,16,7.289029121398926,0.0,3,giving advice,dose_slope,0.3906250000000001,,,7,20261026
+caa,openness,16,7.289029121398926,0.0,3,online interaction,dose_slope,0.4112723214285714,,,7,20261026
+caa,openness,16,7.289029121398926,0.0,3,planning,dose_slope,0.5870535714285715,,,7,20261026
+caa,openness,16,7.289029121398926,0.0,3,problem-solving,dose_slope,0.5283482142857143,,,7,20261026
+caa,openness,16,7.289029121398926,0.0,3,work,dose_slope,0.5059895833333333,,,12,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,casual conversation,dose_slope,0.5776988636363635,,,11,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,decision-making,dose_slope,0.6484375000000001,,,7,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,family,dose_slope,0.6106770833333336,,,12,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,friendship,dose_slope,0.5198317307692307,,,13,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,giving advice,dose_slope,0.5744140624999999,,,8,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,online interaction,dose_slope,0.6126420454545456,,,11,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,planning,dose_slope,0.5536764705882353,,,17,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,problem-solving,dose_slope,0.5407552083333335,,,12,20261026
+caa,conscientiousness,16,6.857882499694824,0.0,3,work,dose_slope,0.6036458333333333,,,9,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,casual conversation,dose_slope,0.77609375,,,10,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,decision-making,dose_slope,0.6188920454545456,,,11,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,family,dose_slope,0.59984375,,,10,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,friendship,dose_slope,0.6517045454545456,,,11,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,giving advice,dose_slope,0.6713541666666667,,,9,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,online interaction,dose_slope,0.7506944444444444,,,18,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,planning,dose_slope,0.8045312500000001,,,10,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,problem-solving,dose_slope,0.6134114583333333,,,12,20261026
+caa,extraversion,16,7.268179416656494,0.0,3,work,dose_slope,0.5100694444444444,,,9,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,casual conversation,dose_slope,0.375,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,decision-making,dose_slope,0.2605468749999999,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,family,dose_slope,0.4726562499999999,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,friendship,dose_slope,0.380234375,,,10,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,giving advice,dose_slope,0.3871093750000001,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,online interaction,dose_slope,0.356640625,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,planning,dose_slope,0.55390625,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,problem-solving,dose_slope,0.4984375,,,4,20261026
+caa,agreeableness,14,5.141862869262695,0.0,3,work,dose_slope,0.3704861111111111,,,9,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,casual conversation,dose_slope,0.4020833333333333,,,9,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,decision-making,dose_slope,0.3880580357142858,,,14,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,family,dose_slope,0.46328125,,,10,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,friendship,dose_slope,0.3361328125000001,,,8,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,giving advice,dose_slope,0.4565104166666666,,,12,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,online interaction,dose_slope,0.41328125,,,10,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,planning,dose_slope,0.5161184210526316,,,19,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,problem-solving,dose_slope,0.4401041666666667,,,9,20261026
+caa,neuroticism,14,5.079046726226807,0.0,3,work,dose_slope,0.3161458333333334,,,9,20261026

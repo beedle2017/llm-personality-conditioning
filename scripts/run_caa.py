@@ -49,16 +49,9 @@ def _seed_everything() -> None:
 
 
 def _load_model() -> tuple[Any, Any]:
-    if torch.cuda.is_available():
-        total_gib = torch.cuda.get_device_properties(0).total_memory / 2**30
-        if total_gib < 12:
-            raise RuntimeError(
-                f"4-bit Llama 3.1 8B requires more headroom than available on "
-                f"{total_gib:.1f} GiB GPU; use a larger GPU for the required model"
-            )
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
     quantization = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
@@ -70,6 +63,7 @@ def _load_model() -> tuple[Any, Any]:
         device_map="auto",
         quantization_config=quantization,
         torch_dtype=torch.bfloat16,
+        low_cpu_mem_usage=True,
     )
     model.eval()
     return model, tokenizer

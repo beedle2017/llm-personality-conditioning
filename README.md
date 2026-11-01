@@ -108,25 +108,39 @@ quantization. The experiment seed is 20261026. CAA vectors use the mean over
 response tokens and unit normalization. `k` is measured in units of the mean
 activation norm at the selected layer.
 
+### Fast-run settings and limitations
+
+The completed fast run used one model load, cached train activations, batch
+size 2 (with OOM halving), `torch.inference_mode()`, sequence length 384,
+layer candidates `{14,16,18}`, a 20-item dev subset for layer selection, and
+`k` multipliers `{0.25,0.5,1.0}`. Final margins used the full dev set, with
+1000 bootstrap resamples. Generation checks used five prompts for calibration
+and ten prompts at scores 1, 3, and 5, greedy decoding, `use_cache=True`, and
+`max_new_tokens=48`. BehaviorBench, BFI, and perplexity were **not run** in
+this fast pass. The layer-sweep source evidence is committed in
+`artifacts/steering/caa/layer_sweep.csv`; calibration invalid rates were zero
+for every tested multiplier.
+
 ### Results so far (CAA)
 
-The current environment has an RTX 4060 Laptop GPU with 8 GB VRAM and the
-required 4-bit dependency, but the gated Llama checkpoint was not available
-locally and could not be downloaded during this run. Therefore CAA numerical
-evaluation, generations, invalid-rate checks, perplexity, layer/k sweeps,
-BehaviorBench, and BFI are marked **not run** rather than fabricated. The
-committed result schema and placeholder configuration are in
-[`artifacts/steering/results.csv`](artifacts/steering/results.csv) and
-[`artifacts/steering/caa/config.json`](artifacts/steering/caa/config.json).
-BehaviorBench and BFI are also **not run** because no implementation or
-offline package was present.
+| Trait | Layer | k | Spearman | Slope | Invalid rate | Dev n |
+|---|---:|---:|---:|---:|---:|---:|
+| openness | 16 | 7.289029 | 1.0000 | 0.487004 | 0.000 | 74 |
+| conscientiousness | 16 | 6.857882 | 1.0000 | 0.576484 | 0.000 | 100 |
+| extraversion | 16 | 7.268179 | 1.0000 | 0.672875 | 0.000 | 100 |
+| agreeableness | 14 | 5.141863 | 1.0000 | 0.399019 | 0.000 | 47 |
+| neuroticism | 14 | 5.079047 | 1.0000 | 0.425969 | 0.000 | 100 |
 
-The method-agnostic figures and tables are generated under
-[`artifacts/steering/figures/`](artifacts/steering/figures/), including
-`dose_response.png`, `layer_sweep.png`, `k_calibration.png`,
-`context_heatmap.png`, `invalid_rates.png`, `summary.csv`, and `summary.md`.
-With no CAA rows, the summary is intentionally empty and no traits can be
-claimed to meet the monotonicity target.
+All five traits met the dev target of Spearman >= 0.9, positive slope, and
+invalid rate <= 5%. These are dev-only results from synthetic pairs, not
+claims about general behavior. Figures and tables are under
+[`artifacts/steering/figures/`](artifacts/steering/figures/):
+[`dose_response.png`](artifacts/steering/figures/dose_response.png),
+[`layer_sweep.png`](artifacts/steering/figures/layer_sweep.png),
+[`k_calibration.png`](artifacts/steering/figures/k_calibration.png),
+[`context_heatmap.png`](artifacts/steering/figures/context_heatmap.png),
+[`invalid_rates.png`](artifacts/steering/figures/invalid_rates.png), and
+[`summary.md`](artifacts/steering/figures/summary.md).
 
 To append BiPO rows, preserve the exact header and append rows with
 `method=bipo` to `artifacts/steering/results.csv`, then run:
@@ -146,8 +160,19 @@ python scripts/plot_steering_results.py
 python -m pytest
 ```
 
-Known limitations and assumptions: the pairs are synthetic; the two smaller
-dev sets have noisier calibration; only one model is specified; the gated
-checkpoint may require Hugging Face access; the implementation assumes the
-standard Llama decoder layer path `model.model.layers`; no BehaviorBench/BFI
-numbers are inferred when unavailable.
+For the fast, resumable run use:
+
+```powershell
+$env:PYTORCH_CUDA_ALLOC_CONF = "expandable_segments:True"
+python scripts/run_caa_fast.py
+python scripts/plot_steering_results.py
+python -m pytest
+```
+
+Known limitations and assumptions: the pairs are synthetic; openness and
+agreeableness use deterministic context-stratified dev rows carved from
+unsplit data and are therefore noisier; only one model and one GPU were used;
+the gated checkpoint requires local Hugging Face access; generation invalid
+checks are lightweight lexical checks; and the implementation assumes the
+standard Llama decoder path `model.model.layers`. BehaviorBench and BFI are
+explicitly not run, so no PIS or BFI numbers are reported.

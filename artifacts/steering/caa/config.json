@@ -7,7 +7,53 @@
     "do_sample": false,
     "max_new_tokens": 128
   },
-  "status": "not run",
-  "reason": "Model unavailable: RuntimeError: 4-bit Llama 3.1 8B requires more headroom than available on 8.0 GiB GPU; use a larger GPU for the required model",
-  "method": "caa"
+  "status": "fast_complete",
+  "method": "caa",
+  "traits": {
+    "openness": {
+      "layer": 16,
+      "k": 7.289029121398926,
+      "k_multiplier": 1.0,
+      "spearman": 0.9999999999999999,
+      "slope": 0.4870038006756758,
+      "invalid_rate": 0.0,
+      "runtime_seconds": 476.0904200077057
+    },
+    "conscientiousness": {
+      "layer": 16,
+      "k": 6.857882499694824,
+      "k_multiplier": 1.0,
+      "spearman": 0.9999999999999999,
+      "slope": 0.5764843750000002,
+      "invalid_rate": 0.0,
+      "runtime_seconds": 1020.1512277126312
+    },
+    "extraversion": {
+      "layer": 16,
+      "k": 7.268179416656494,
+      "k_multiplier": 1.0,
+      "spearman": 0.9999999999999999,
+      "slope": 0.6728749999999998,
+      "invalid_rate": 0.0,
+      "runtime_seconds": 1561.7939672470093
+    },
+    "agreeableness": {
+      "layer": 14,
+      "k": 5.141862869262695,
+      "k_multiplier": 1.0,
+      "spearman": 0.9999999999999999,
+      "slope": 0.39901928191489366,
+      "invalid_rate": 0.0,
+      "runtime_seconds": 1874.3853476047516
+    },
+    "neuroticism": {
+      "layer": 14,
+      "k": 5.079046726226807,
+      "k_multiplier": 1.0,
+      "spearman": 0.9999999999999999,
+      "slope": 0.42596875,
+      "invalid_rate": 0.0,
+      "runtime_seconds": 3252.88649225235
+    }
+  }
 }
