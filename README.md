@@ -30,3 +30,17 @@ The persisted counter is `data/pairs/.state/quota.json`; requests are rate
 limited and quota errors back off with jitter. The run plan is: dry-run all
 prompts, smoke-test a small generated sample by hand, then run the resumable
 full generation and inspect statistics.
+
+## Steering data
+
+The contrastive pairs are loaded with `src/steering/data.py`. It prints the
+raw row and split counts for each trait, preserves a complete train/dev split
+when at least 50 dev rows are present, and otherwise creates a deterministic,
+context-stratified dev split from unsplit/train rows. The loader returns
+`TraitData.train` and `TraitData.dev` separately: compute steering vectors
+from `train` only, and use `dev` only to select layers and alpha values.
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m steering.data
+```
