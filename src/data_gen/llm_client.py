@@ -100,13 +100,20 @@ class LLMClient:
                 ) from exc
             import os
             if provider == "gemini":
-                key_path = Path("gemini-api-key.txt")
-                try:
-                    key = key_path.read_text(encoding="utf-8").strip()
-                except FileNotFoundError as exc:
-                    raise RuntimeError(f"Missing Gemini API key file: {key_path}") from exc
+                key = os.environ.get(self.config.api_key_env)
                 if not key:
-                    raise RuntimeError(f"Gemini API key file is empty: {key_path}")
+                    key_path = Path("gemini-api-key.txt")
+                    try:
+                        key = key_path.read_text(encoding="utf-8").strip()
+                    except FileNotFoundError as exc:
+                        raise RuntimeError(
+                            f"Missing Gemini API key environment variable or file: "
+                            f"{self.config.api_key_env}/{key_path}"
+                        ) from exc
+                if not key:
+                    raise RuntimeError(
+                        f"Gemini API key is empty: {self.config.api_key_env}"
+                    )
             else:
                 env_name = "OPENAI_API_KEY"
                 key = os.environ.get(env_name)

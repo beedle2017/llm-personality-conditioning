@@ -1,0 +1,16 @@
+trait,layer,slope_proxy
+openness,14,0.954687
+openness,16,1.053906
+openness,18,0.885156
+conscientiousness,14,1.114062
+conscientiousness,16,1.135156
+conscientiousness,18,1.012891
+extraversion,14,1.317187
+extraversion,16,1.455469
+extraversion,18,1.277344
+agreeableness,14,0.791016
+agreeableness,16,0.725000
+agreeableness,18,0.576953
+neuroticism,14,1.017969
+neuroticism,16,1.010156
+neuroticism,18,0.808594

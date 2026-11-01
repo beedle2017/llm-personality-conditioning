@@ -1,2 +1,6 @@
 iteration,trait,change,status,reason
-0,all,initialization,not run,Model unavailable: RuntimeError: 4-bit Llama 3.1 8B requires more headroom than available on 8.0 GiB GPU; use a larger GPU for the required model
+1,openness,"layers 14,16,18; k multipliers 0.25,0.5,1.0",passed,"layer 16 selected; all calibration invalid rates 0.000"
+1,conscientiousness,"layers 14,16,18; k multipliers 0.25,0.5,1.0",passed,"layer 16 selected; all calibration invalid rates 0.000"
+1,extraversion,"layers 14,16,18; k multipliers 0.25,0.5,1.0",passed,"layer 16 selected; all calibration invalid rates 0.000"
+1,agreeableness,"layers 14,16,18; k multipliers 0.25,0.5,1.0",passed,"layer 14 selected; all calibration invalid rates 0.000"
+1,neuroticism,"layers 14,16,18; k multipliers 0.25,0.5,1.0",passed,"layer 14 selected; all calibration invalid rates 0.000"

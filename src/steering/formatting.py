@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+import torch
 
 @dataclass(frozen=True)
 class FormattedPair:
@@ -30,13 +31,17 @@ def format_pair(tokenizer: Any, prompt: str, response: str) -> FormattedPair:
         add_generation_prompt=False,
         return_tensors="pt",
     )
-    input_ids = full if full.ndim == 2 else full.unsqueeze(0)
-    prefix_ids = prefix if prefix.ndim == 2 else prefix.unsqueeze(0)
+    input_ids = full["input_ids"] if isinstance(full, dict) or hasattr(full, "keys") else full
+    prefix_ids = prefix["input_ids"] if isinstance(prefix, dict) or hasattr(prefix, "keys") else prefix
+    if input_ids.ndim == 1:
+        input_ids = input_ids.unsqueeze(0)
+    if prefix_ids.ndim == 1:
+        prefix_ids = prefix_ids.unsqueeze(0)
     response_start = prefix_ids.shape[-1]
-    response_mask = input_ids.new_zeros(input_ids.shape, dtype=__import__("torch").bool)
+    response_mask = input_ids.new_zeros(input_ids.shape, dtype=torch.bool)
     response_mask[:, response_start:] = True
     return FormattedPair(
         input_ids=input_ids,
-        attention_mask=__import__("torch").ones_like(input_ids),
+        attention_mask=torch.ones_like(input_ids),
         response_mask=response_mask,
     )

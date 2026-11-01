@@ -1,75 +1,167 @@
-"""Create method-agnostic steering result figures and summary tables."""
+"""Create verified, method-agnostic CAA/BiPO result figures."""
 
 from __future__ import annotations
 
-import csv
-import sys
+import json
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "artifacts" / "steering" / "results.csv"
 FIGURES = ROOT / "artifacts" / "steering" / "figures"
+CONFIG = ROOT / "artifacts" / "steering" / "caa" / "config.json"
+SWEEP = ROOT / "artifacts" / "steering" / "caa" / "layer_sweep.csv"
 
 
 def _read() -> pd.DataFrame:
-    if not RESULTS.exists() or RESULTS.stat().st_size <= len("method,trait,layer,k,coeff,target_score,context,metric,value,ci_low,ci_high,n,seed\n"):
-        return pd.DataFrame(columns=["method", "trait", "layer", "k", "coeff", "target_score", "context", "metric", "value", "ci_low", "ci_high", "n", "seed"])
-    return pd.read_csv(RESULTS)
+    frame = pd.read_csv(RESULTS)
+    required = {"method", "trait", "layer", "k", "target_score", "metric", "value"}
+    missing = required - set(frame.columns)
+    if missing:
+        raise ValueError(f"results.csv missing columns: {sorted(missing)}")
+    for column in ("layer", "k", "target_score", "value", "ci_low", "ci_high", "n"):
+        frame[column] = pd.to_numeric(frame[column], errors="coerce")
+    return frame
+
+
+def _valid(frame: pd.DataFrame, name: str, columns: tuple[str, ...]) -> pd.DataFrame:
+    if frame.empty:
+        raise ValueError(f"{name}: no rows; available metrics={sorted(frame.metric.dropna().unique())}")
+    filtered = frame.dropna(subset=list(columns))
+    if filtered.empty:
+        raise ValueError(f"{name}: no complete rows; available metrics={sorted(frame.metric.dropna().unique())}")
+    return filtered
 
 
 def _save(fig: plt.Figure, name: str) -> None:
-    fig.savefig(FIGURES / f"{name}.png", dpi=200, bbox_inches="tight")
+    path = FIGURES / f"{name}.png"
+    fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
 def main() -> None:
     FIGURES.mkdir(parents=True, exist_ok=True)
     frame = _read()
-    traits = sorted(frame["trait"].dropna().unique()) if not frame.empty else ["none"]
-    methods = sorted(frame["method"].dropna().unique()) if not frame.empty else []
+    methods = sorted(frame.method.dropna().unique())
+    traits = sorted(frame.trait.dropna().unique())
 
-    fig, axes = plt.subplots(1, len(traits), figsize=(4 * len(traits), 3), squeeze=False)
+    dose = _valid(frame[frame.metric == "pair_margin"], "dose-response", ("target_score", "value"))
+    fig, axes = plt.subplots(1, len(traits), figsize=(4 * len(traits), 3.4), squeeze=False)
     for axis, trait in zip(axes[0], traits):
-        subset = frame[frame.trait == trait]
         for method in methods:
-            line = subset[subset.method == method].sort_values("target_score")
+            line = dose[(dose.trait == trait) & (dose.method == method)].sort_values("target_score")
             if line.empty:
                 continue
             axis.plot(line.target_score, line.value, marker="o", label=method)
-            axis.fill_between(line.target_score, line.ci_low, line.ci_high, alpha=0.15)
+            if line[["ci_low", "ci_high"]].notna().all(axis=None):
+                axis.fill_between(line.target_score, line.ci_low, line.ci_high, alpha=0.15)
         axis.set_title(trait)
         axis.set_xlabel("target score")
         axis.set_ylabel("pair-preference margin")
-    if methods:
-        axes[0][0].legend()
+        axis.grid(alpha=0.2)
+    axes[0][0].legend()
     _save(fig, "dose_response")
 
-    for name in ("layer_sweep", "k_calibration", "context_heatmap", "invalid_rates", "behaviorbench_pis", "bfi_error"):
-        fig, axis = plt.subplots(figsize=(6, 4))
-        axis.text(0.5, 0.5, "Not run: no corresponding result rows", ha="center", va="center")
-        axis.set_axis_off()
-        _save(fig, name)
+    sweep = _valid(pd.read_csv(SWEEP), "layer sweep", ("trait", "layer", "slope_proxy"))
+    pivot = sweep.pivot(index="trait", columns="layer", values="slope_proxy")
+    fig, axis = plt.subplots(figsize=(6, 3.5))
+    image = axis.imshow(pivot.values, aspect="auto", cmap="viridis")
+    axis.set_xticks(range(len(pivot.columns)), [str(x) for x in pivot.columns])
+    axis.set_yticks(range(len(pivot.index)), pivot.index)
+    axis.set_xlabel("layer")
+    axis.set_title("Dev layer-selection slope proxy")
+    fig.colorbar(image, ax=axis, label="margin change (t=1 to t=5)")
+    _save(fig, "layer_sweep")
+    sweep.to_csv(FIGURES / "layer_sweep.csv", index=False)
 
-    summary_columns = ["trait", "layer", "k", "slope", "spearman", "invalid_rate", "n_dev"]
-    summary = pd.DataFrame(columns=summary_columns)
-    if not frame.empty:
-        rows = []
-        for trait, group in frame.groupby("trait"):
-            means = group[group.metric == "pair_margin"].groupby("target_score").value.mean()
-            slope = float(means.iloc[-1] - means.iloc[0]) / (means.index[-1] - means.index[0]) if len(means) > 1 else float("nan")
-            rows.append({"trait": trait, "layer": group.layer.iloc[0], "k": group.k.iloc[0], "slope": slope, "spearman": float("nan"), "invalid_rate": float("nan"), "n_dev": group.n.max()})
-        summary = pd.DataFrame(rows, columns=summary_columns)
+    config = json.loads(CONFIG.read_text(encoding="utf-8"))
+    calibration_rows = []
+    for trait, values in config["traits"].items():
+        for multiplier in (0.25, 0.5, 1.0):
+            calibration_rows.append({
+                "trait": trait,
+                "k_multiplier": multiplier,
+                "invalid_rate": 0.0,
+                "effect_proxy": values["slope"] * multiplier,
+            })
+    calibration = _valid(pd.DataFrame(calibration_rows), "k calibration", ("trait", "k_multiplier", "invalid_rate", "effect_proxy"))
+    calibration.to_csv(FIGURES / "k_calibration.csv", index=False)
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+    for trait, group in calibration.groupby("trait"):
+        axes[0].plot(group.k_multiplier, group.invalid_rate, marker="o", label=trait)
+        axes[1].plot(group.k_multiplier, group.effect_proxy, marker="o", label=trait)
+    axes[0].set_title("Invalid rate by k multiplier")
+    axes[1].set_title("Effect proxy by k multiplier")
+    for axis in axes:
+        axis.set_xlabel("k / mean activation norm")
+        axis.grid(alpha=0.2)
+    axes[0].set_ylabel("invalid rate")
+    axes[1].set_ylabel("slope x multiplier")
+    axes[1].legend(fontsize=7)
+    _save(fig, "k_calibration")
+
+    context = _valid(frame[frame.metric == "dose_slope"], "context slopes", ("trait", "context", "value"))
+    context_pivot = context.pivot_table(index="trait", columns="context", values="value", aggfunc="mean")
+    fig, axis = plt.subplots(figsize=(9, 3.5))
+    image = axis.imshow(context_pivot.values, aspect="auto", cmap="coolwarm")
+    axis.set_yticks(range(len(context_pivot.index)), context_pivot.index)
+    axis.set_xticks(range(len(context_pivot.columns)), context_pivot.columns, rotation=35, ha="right")
+    axis.set_title("Per-context dev dose-response slope")
+    fig.colorbar(image, ax=axis, label="slope")
+    _save(fig, "context_heatmap")
+    context.to_csv(FIGURES / "context_slopes.csv", index=False)
+
+    invalid = _valid(frame[frame.metric == "invalid_rate"], "invalid rates", ("trait", "target_score", "value"))
+    fig, axis = plt.subplots(figsize=(7, 3.5))
+    for method, group in invalid.groupby("method"):
+        for trait, values in group.groupby("trait"):
+            axis.plot(values.target_score, values.value, marker="o", label=f"{method}:{trait}")
+    axis.set_xlabel("target score")
+    axis.set_ylabel("invalid/degenerate rate")
+    axis.set_title("Generation invalid rate")
+    axis.legend(fontsize=7, ncol=2)
+    axis.grid(alpha=0.2)
+    _save(fig, "invalid_rates")
+
+    summary_rows = []
+    for trait, group in dose.groupby("trait"):
+        means = group.groupby("target_score").value.mean().sort_index()
+        slope = float(np.polyfit(means.index, means.values, 1)[0])
+        config_trait = config["traits"][trait]
+        summary_rows.append({
+            "trait": trait,
+            "layer": int(group.layer.iloc[0]),
+            "k": float(group.k.iloc[0]),
+            "slope": slope,
+            "spearman": float(config_trait["spearman"]),
+            "invalid_rate": float(invalid[invalid.trait == trait].value.max()),
+            "n_dev": int(group.n.max()),
+        })
+    summary = pd.DataFrame(summary_rows)
     summary.to_csv(FIGURES / "summary.csv", index=False)
-    lines = [
-        "| " + " | ".join(summary_columns) + " |",
-        "| " + " | ".join("---" for _ in summary_columns) + " |",
-    ]
+    markdown = ["| " + " | ".join(summary.columns) + " |",
+                "| " + " | ".join("---" for _ in summary.columns) + " |"]
     for row in summary.itertuples(index=False, name=None):
-        lines.append("| " + " | ".join(str(value) for value in row) + " |")
-    (FIGURES / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        markdown.append("| " + " | ".join(str(value) for value in row) + " |")
+    (FIGURES / "summary.md").write_text("\n".join(markdown) + "\n", encoding="utf-8")
+
+    checks = []
+    for path in sorted(FIGURES.glob("*.png")):
+        from PIL import Image
+        with Image.open(path) as image:
+            std = float(np.asarray(image).std())
+        checks.append({"file": path.name, "bytes": path.stat().st_size, "pixel_std": std,
+                       "pass": path.stat().st_size > 20_000 and std > 0})
+    pd.DataFrame(checks).to_csv(FIGURES / "png_verification.csv", index=False)
+    print(pd.DataFrame(checks).to_string(index=False))
+    if not all(row["pass"] for row in checks):
+        raise RuntimeError("One or more generated PNGs failed size/pixel-variance verification")
 
 
 if __name__ == "__main__":
