@@ -223,4 +223,5 @@ __marimo__/
 gemini-api-key.txt
 .vscode/
 artifacts/steering/caa/vectors/*.pt
+artifacts/steering/caa/cache/*.pt
 artifacts/steering/caa/generations/
