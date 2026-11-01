@@ -1,0 +1,13 @@
+{
+  "model": "meta-llama/Llama-3.1-8B-Instruct",
+  "dtype": "bfloat16",
+  "quantization": "4-bit NF4 (bitsandbytes)",
+  "seed": 20261026,
+  "decoding": {
+    "do_sample": false,
+    "max_new_tokens": 128
+  },
+  "status": "not run",
+  "reason": "Model unavailable: RuntimeError: 4-bit Llama 3.1 8B requires more headroom than available on 8.0 GiB GPU; use a larger GPU for the required model",
+  "method": "caa"
+}
