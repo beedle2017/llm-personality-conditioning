@@ -38,6 +38,7 @@ PROMPT = (
 def ask_model(prompt: str) -> str:
     #Replace with API call; return the model's text reply
     #TODO
+    #get model, tokenizer, then call generate_response in prompt_direct
     pass
 
 def parse_rating(text: str):
