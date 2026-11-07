@@ -92,8 +92,27 @@ def _response_logprob(model: nn.Module, input_ids: Tensor, response_start: int) 
 
 
 def _encoded_response(
-	tokenizer: Any, prompt: str, response: str, device: torch.device
+	tokenizer: Any, prompt: str, response: str, device: torch.device, chat_template: bool
 ) -> tuple[Tensor, int]:
+	if chat_template:
+		prompt_ids = tokenizer.apply_chat_template(
+			[{"role": "user", "content": prompt}],
+			tokenize=True,
+			add_generation_prompt=True,
+			return_tensors="pt",
+		)
+		prompt_ids = prompt_ids["input_ids"] if isinstance(prompt_ids, dict) or hasattr(prompt_ids, "keys") else prompt_ids
+		input_ids = tokenizer.apply_chat_template(
+			[
+				{"role": "user", "content": prompt},
+				{"role": "assistant", "content": response},
+			],
+			tokenize=True,
+			add_generation_prompt=False,
+			return_tensors="pt",
+		)
+		input_ids = input_ids["input_ids"] if isinstance(input_ids, dict) or hasattr(input_ids, "keys") else input_ids
+		return input_ids.to(device), prompt_ids.shape[-1]
 	prompt_ids = tokenizer(prompt, add_special_tokens=True, return_tensors="pt")["input_ids"]
 	response_ids = tokenizer(response, add_special_tokens=False, return_tensors="pt")["input_ids"]
 	input_ids = torch.cat((prompt_ids, response_ids), dim=-1).to(device)
@@ -125,6 +144,7 @@ def steering(
 	epochs: int = DEFAULT_EPOCHS,
 	batch_size: int = DEFAULT_BATCH_SIZE,
 	seed: int = DEFAULT_SEED,
+	chat_template: bool = True,
 ) -> Tensor:
 	"""Train and return a BiPO steering vector for ``trait``.
 
@@ -162,7 +182,7 @@ def steering(
 			rows = list(trait_data.train)
 			rng.shuffle(rows)
 			for start in range(0, len(rows), batch_size):
-				print(f"Processing row {start} with batch size {batch_size}")
+				# print(f"Processing row {start} with batch size {batch_size}")
 				batch = rows[start : start + batch_size]
 				optimizer.zero_grad(set_to_none=True)
 				losses: list[Tensor] = []
@@ -177,10 +197,10 @@ def steering(
 					negative_text = cast(str, negative)
 
 					positive_ids, positive_start = _encoded_response(
-						tokenizer_obj, prompt_text, positive_text, device
+						tokenizer_obj, prompt_text, positive_text, device, chat_template
 					)
 					negative_ids, negative_start = _encoded_response(
-						tokenizer_obj, prompt_text, negative_text, device
+						tokenizer_obj, prompt_text, negative_text, device, chat_template
 					)
 					with torch.no_grad():
 						positive_base = _response_logprob(model, positive_ids, positive_start)
