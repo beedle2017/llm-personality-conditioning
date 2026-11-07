@@ -68,12 +68,41 @@ def main() -> None:
     axes[0][0].legend()
     _save(fig, "dose_response")
 
+    behavior = frame[frame.metric == "behaviorbench_endorsement"]
+    if not behavior.empty:
+        fig, axes = plt.subplots(1, len(traits), figsize=(4 * len(traits), 3.4), squeeze=False)
+        for axis, trait in zip(axes[0], traits):
+            for method in sorted(behavior.method.dropna().unique()):
+                line = behavior[(behavior.trait == trait) & (behavior.method == method)].sort_values("target_score")
+                if line.empty:
+                    continue
+                axis.plot(line.target_score, line.value, marker="o", label=method)
+                if line[["ci_low", "ci_high"]].notna().all(axis=None):
+                    axis.fill_between(line.target_score, line.ci_low, line.ci_high, alpha=0.15)
+            axis.set_title(trait)
+            axis.set_xlabel("target score")
+            axis.set_ylabel("BehaviorBench endorsement")
+            axis.set_ylim(-0.05, 1.05)
+            axis.grid(alpha=0.2)
+        axes[0][0].legend()
+        _save(fig, "behaviorbench_dose_response")
+
     sweep = _valid(pd.read_csv(SWEEP), "layer sweep", ("trait", "layer", "slope_proxy"))
-    pivot = sweep.pivot(index="trait", columns="layer", values="slope_proxy")
+    if "method" not in sweep:
+        sweep.insert(0, "method", "caa")
+    behavior_slopes = frame[frame.metric == "dose_slope"]
+    if not behavior_slopes.empty:
+        bipo_sweep = behavior_slopes.loc[behavior_slopes.method != "caa", ["method", "trait", "layer", "value"]].copy()
+        bipo_sweep = bipo_sweep.rename(columns={"value": "slope_proxy"})
+        bipo_sweep["slope_proxy"] *= 4
+        sweep = pd.concat([sweep, bipo_sweep], ignore_index=True)
+    pivot = sweep.pivot_table(
+        index=["method", "trait"], columns="layer", values="slope_proxy", aggfunc="mean"
+    )
     fig, axis = plt.subplots(figsize=(6, 3.5))
     image = axis.imshow(pivot.values, aspect="auto", cmap="viridis")
     axis.set_xticks(range(len(pivot.columns)), [str(x) for x in pivot.columns])
-    axis.set_yticks(range(len(pivot.index)), pivot.index)
+    axis.set_yticks(range(len(pivot.index)), [f"{method}:{trait}" for method, trait in pivot.index])
     axis.set_xlabel("layer")
     axis.set_title("Dev layer-selection slope proxy")
     fig.colorbar(image, ax=axis, label="margin change (t=1 to t=5)")
@@ -89,13 +118,22 @@ def main() -> None:
                 "k_multiplier": multiplier,
                 "invalid_rate": 0.0,
                 "effect_proxy": values["slope"] * multiplier,
+                "method": "caa",
+            })
+    bipo_calibration = frame[frame.metric == "k_calibration_invalid_rate"]
+    if not bipo_calibration.empty:
+        for row in bipo_calibration.itertuples(index=False):
+            calibration_rows.append({
+                "method": row.method, "trait": row.trait, "k_multiplier": row.k,
+                "invalid_rate": row.value, "effect_proxy": np.nan,
             })
     calibration = _valid(pd.DataFrame(calibration_rows), "k calibration", ("trait", "k_multiplier", "invalid_rate", "effect_proxy"))
     calibration.to_csv(FIGURES / "k_calibration.csv", index=False)
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
-    for trait, group in calibration.groupby("trait"):
+    for (method, trait), group in calibration.groupby(["method", "trait"]):
         axes[0].plot(group.k_multiplier, group.invalid_rate, marker="o", label=trait)
-        axes[1].plot(group.k_multiplier, group.effect_proxy, marker="o", label=trait)
+        if group.effect_proxy.notna().any():
+            axes[1].plot(group.k_multiplier, group.effect_proxy, marker="o", label=f"{method}:{trait}")
     axes[0].set_title("Invalid rate by k multiplier")
     axes[1].set_title("Effect proxy by k multiplier")
     for axis in axes:
@@ -107,7 +145,8 @@ def main() -> None:
     _save(fig, "k_calibration")
 
     context = _valid(frame[frame.metric == "dose_slope"], "context slopes", ("trait", "context", "value"))
-    context_pivot = context.pivot_table(index="trait", columns="context", values="value", aggfunc="mean")
+    context["context_method"] = context.method + ":" + context.context
+    context_pivot = context.pivot_table(index="trait", columns="context_method", values="value", aggfunc="mean")
     fig, axis = plt.subplots(figsize=(9, 3.5))
     image = axis.imshow(context_pivot.values, aspect="auto", cmap="coolwarm")
     axis.set_yticks(range(len(context_pivot.index)), context_pivot.index)
@@ -117,11 +156,11 @@ def main() -> None:
     _save(fig, "context_heatmap")
     context.to_csv(FIGURES / "context_slopes.csv", index=False)
 
-    invalid = _valid(frame[frame.metric == "invalid_rate"], "invalid rates", ("trait", "target_score", "value"))
+    invalid = _valid(frame[frame.metric.isin(("invalid_rate", "behaviorbench_invalid_rate"))], "invalid rates", ("trait", "target_score", "value"))
     fig, axis = plt.subplots(figsize=(7, 3.5))
     for method, group in invalid.groupby("method"):
         for trait, values in group.groupby("trait"):
-            axis.plot(values.target_score, values.value, marker="o", label=f"{method}:{trait}")
+                axis.plot(values.target_score, values.value, marker="o", label=f"{method}:{trait}")
     axis.set_xlabel("target score")
     axis.set_ylabel("invalid/degenerate rate")
     axis.set_title("Generation invalid rate")
@@ -130,17 +169,39 @@ def main() -> None:
     _save(fig, "invalid_rates")
 
     summary_rows = []
-    for trait, group in dose.groupby("trait"):
+    for (method, trait), group in dose.groupby(["method", "trait"]):
         means = group.groupby("target_score").value.mean().sort_index()
         slope = float(np.polyfit(means.index, means.values, 1)[0])
-        config_trait = config["traits"][trait]
+        config_trait = config["traits"].get(trait, {}) if method == "caa" else {}
+        method_invalid = invalid[(invalid.method == method) & (invalid.trait == trait)]
         summary_rows.append({
+            "method": method,
             "trait": trait,
             "layer": int(group.layer.iloc[0]),
             "k": float(group.k.iloc[0]),
             "slope": slope,
-            "spearman": float(config_trait["spearman"]),
-            "invalid_rate": float(invalid[invalid.trait == trait].value.max()),
+            "spearman": float(config_trait.get("spearman", np.nan)),
+            "invalid_rate": float(method_invalid.value.max()) if not method_invalid.empty else np.nan,
+            "n_dev": int(group.n.max()),
+        })
+    for (method, trait), group in behavior.groupby(["method", "trait"]):
+        if method == "caa":
+            continue
+        means = group.groupby("target_score").value.mean().sort_index()
+        if len(means) < 2:
+            continue
+        ranks = means.rank().to_numpy()
+        targets = means.index.to_numpy()
+        spearman = float(np.corrcoef(targets, ranks)[0, 1])
+        method_invalid = invalid[(invalid.method == method) & (invalid.trait == trait)]
+        summary_rows.append({
+            "method": method,
+            "trait": trait,
+            "layer": int(group.layer.iloc[0]),
+            "k": float(group.k.iloc[0]),
+            "slope": float(np.polyfit(means.index, means.values, 1)[0]),
+            "spearman": spearman,
+            "invalid_rate": float(method_invalid.value.max()) if not method_invalid.empty else np.nan,
             "n_dev": int(group.n.max()),
         })
     summary = pd.DataFrame(summary_rows)
