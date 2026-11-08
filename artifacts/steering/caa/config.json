@@ -55,5 +55,48 @@
       "invalid_rate": 0.0,
       "runtime_seconds": 3252.88649225235
     }
+  },
+  "behaviorbench": {
+    "runtime": "4-bit NF4",
+    "quantization": "4-bit NF4",
+    "k_grid": [
+      1,
+      2,
+      4,
+      6,
+      8,
+      12,
+      16,
+      24
+    ],
+    "decoding": {
+      "do_sample": false,
+      "max_new_tokens": 8,
+      "batch_size": 4
+    },
+    "prompt_version": "eval.behaviorbench baseline prompt",
+    "traits": {
+      "openness": {
+        "layer": 16,
+        "k": 4.0
+      },
+      "conscientiousness": {
+        "layer": 16,
+        "k": 4.0
+      },
+      "extraversion": {
+        "layer": 16,
+        "k": 1.0
+      },
+      "agreeableness": {
+        "layer": 14,
+        "k": 1.0
+      },
+      "neuroticism": {
+        "layer": 14,
+        "k": 4.0
+      }
+    },
+    "seed": 20261026
   }
 }
