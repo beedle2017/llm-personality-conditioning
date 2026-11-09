@@ -106,11 +106,17 @@ def _bootstrap(values, resamples=1000, seed=20261026):
 
 
 def write_results_csv(records, path):
-    """One row per trait, condition and level; rates are fractions (0-1) like artifacts/eval."""
+    """One row per split, trait, condition and level; rates are fractions (0-1) like artifacts/eval.
+
+    Each split is compared with its own drafts, so development and test can share one file.
+    """
     records = [r for r in records if r["kind"] != "bfi"]
     rows = []
-    for trait in sorted({r["item_trait"] for r in records}, key="OCEAN".index):
-        subset = [r for r in records if r["item_trait"] == trait]
+    splits = sorted({r.get("split") or "" for r in records}, key=lambda s: (s != "development", s))
+    for split, trait in [(s, t) for s in splits for t in "OCEAN"]:
+        subset = [r for r in records if r["item_trait"] == trait and (r.get("split") or "") == split]
+        if not subset:
+            continue
         drafts = [r for r in subset if r["condition"] == "draft"]
         baseline = {(r["item_id"], r["seed"]): r["score"] for r in drafts}
         base_rate = rate(drafts)
@@ -125,7 +131,7 @@ def write_results_csv(records, path):
             change = flips(group, baseline) if condition != "draft" else {"up": None, "down": None}
             low, high = _bootstrap(valid)
             rows.append({"method": "rewriting", "condition": condition, "trait": TRAIT_NAMES[trait],
-                         "split": group[0].get("split"), "target_score": level or "",
+                         "split": split, "target_score": level or "",
                          "endorsement_rate": mean(valid) if valid else "",
                          "invalid_rate": invalid_rate(group) / 100, "ci_low": low, "ci_high": high,
                          "n": len(group), "valid_n": len(valid),

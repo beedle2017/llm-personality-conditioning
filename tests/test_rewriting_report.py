@@ -90,6 +90,20 @@ class ReportTests(unittest.TestCase):
         self.assertAlmostEqual(float(free["pis"]), 0.41667, places=4)
         self.assertAlmostEqual(float(free["invalid_rate"]), 0.25)
 
+    def test_results_csv_keeps_splits_and_their_baselines_apart(self):
+        dev = [dict(r, split="development") for r in self.drafts + self.low]
+        test = [dict(record("t", "draft", None, 0), split="test"),
+                dict(record("t", "free", 1, 0), split="test")]
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "results.csv"
+            captured(report.write_results_csv, dev + test, path)
+            with path.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+        free = {r["split"]: r for r in rows if r["condition"] == "free"}
+        self.assertEqual([r["split"] for r in rows], ["development"] * 2 + ["test"] * 2)
+        self.assertAlmostEqual(float(free["development"]["pis"]), 0.41667, places=4)
+        self.assertEqual((free["test"]["n"], float(free["test"]["pis"])), ("1", 0.0))
+
     def test_label_sheet_shows_question_and_accepts_choice_numbers(self):
         import json
         item = json.loads((ROOT / "data/behaviorbench/adapted/data/development.json").read_text())[0]
