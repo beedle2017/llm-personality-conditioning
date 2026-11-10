@@ -225,3 +225,6 @@ gemini-api-key.txt
 artifacts/steering/caa/vectors/*.pt
 artifacts/steering/caa/cache/*.pt
 artifacts/steering/caa/generations/
+
+# Rewriting run outputs
+outputs/
