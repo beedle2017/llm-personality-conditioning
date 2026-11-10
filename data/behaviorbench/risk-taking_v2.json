@@ -1,0 +1,152 @@
+[
+    {
+        "behavior": "Admitting that your tastes are different from those of your friends.",
+        "scenarios": [
+            "You are at a group dinner with friends. The menu offers both spicy and mild dishes. Friends enthusiastically order multiple spicy options and ask for your preference.",
+            "Friends are creating a shared playlist for a road trip. They add several songs from a genre you dislike while discussing which tracks to include.",
+            "During a book club meeting at a café, members passionately debate the merits of the current novel. The discussion turns to personal opinions about the writing style.",
+            "You're browsing streaming services with roommates to choose a movie. They immediately select a horror film after listing their preferred genres.",
+            "Coworkers are decorating a shared office space. They hang multiple sports team posters while asking if anyone has suggestions for additional decorations.",
+            "Friends are preparing for a group photo at an event. They suggest everyone wear bright matching colors while coordinating outfits.",
+            "At a holiday gathering, friends exchange gifts they collectively purchased. They reveal identical band merchandise and ask if you recognize the artist.",
+            "You're planning a weekend trip with acquaintances. They propose a beach destination while listing activities they enjoy there.",
+            "During a museum visit with colleagues, friends pause at an abstract art exhibit. They comment positively on the piece before asking for your interpretation.",
+            "Friends are selecting a restaurant for a celebration. They unanimously choose a steakhouse after reviewing menu options online."
+        ]
+    },
+    {
+        "behavior": "Investing 10% of your annual income in a moderate growth mutual fund.",
+        "scenarios": [
+            "You received your annual performance review at work and were approved for a 5% salary increase effective next month. Your current savings account holds three months of emergency funds.",
+            "Your tax return was processed this week, resulting in a $4,200 refund deposit. This amount equals approximately 10% of your previous year's income.",
+            "Your employer just distributed annual bonuses, and you received $8,500 after taxes. Company policy allows immediate deposit of bonuses into investment accounts.",
+            "A distant relative passed away, leaving you an inheritance of $12,000. The funds are now available in your checking account with no specified purpose.",
+            "Financial news outlets reported increased market volatility this week. Your current investment portfolio consists entirely of low-yield savings bonds.",
+            "A colleague mentioned achieving 7% annual returns through their mutual fund investments during a work lunch. You currently hold all discretionary savings in a money market account.",
+            "Your bank's online portal suggested portfolio diversification options after you logged in. Your existing investments are limited to certificates of deposit maturing within six months.",
+            "You recently paid off your car loan, freeing up $350 monthly. Your current retirement account balance is below industry-recommended benchmarks for your age group.",
+            "A freelance project concluded successfully, resulting in unexpected earnings of $9,800. This amount matches 10% of your documented income from last year's tax return.",
+            "Your company's HR department announced changes to the retirement plan options effective next quarter. The current default fund has consistently underperformed market averages for two years."
+        ]
+    },
+    {
+        "behavior": "Consuming five or more servings of alcohol in a single evening.",
+        "scenarios": [
+            "You are attending an office holiday party at a restaurant. Colleagues are ordering multiple rounds of drinks, and the company covers all alcohol costs for the evening.",
+            "You are at a friend's apartment for a casual game night. Several guests have brought alcoholic beverages, and the group is playing drinking games with shot glasses available.",
+            "You are a guest at a wedding reception with an open bar. The celebration includes toasts, dancing, and unlimited drink service throughout the evening.",
+            "You are celebrating a work project completion at a bar with teammates. Management approved a budget for drinks, and others are ordering high-alcohol cocktails repeatedly.",
+            "You are at an outdoor music festival with portable bars. Multiple stages are operating late into the night, and festival-goers commonly carry alcoholic beverages between performances.",
+            "You are participating in a cultural holiday dinner at a relative's home. Traditional customs include frequent toasting with strong spirits throughout the multi-course meal.",
+            "You are at a college graduation party in a rented house. Numerous coolers contain beer, and guests are encouraged to refill cups continuously during the event.",
+            "You are observing a milestone birthday at a nightclub. The birthday person's group reserved a table with bottle service, including multiple bottles of liquor for the table.",
+            "You are alone at home after work on a Friday evening. A full liquor cabinet is accessible, and you have no commitments scheduled for the next day.",
+            "You are at a bar following a first date that ended abruptly. Other patrons are ordering double shots, and the bartender is running a 'last call' special on mixed drinks."
+        ]
+    },
+    {
+        "behavior": "Disagreeing with your father on a major issue.",
+        "scenarios": [
+            "You and your father are discussing college applications. He insists you must attend the local public university for affordability, but you want to pursue a specialized program at a distant private institution requiring significant loans.",
+            "Your father has organized a family reunion at a restaurant that serves food conflicting with your recently adopted dietary restrictions. He states the reservation is non-refundable and expects everyone to attend as planned.",
+            "During a car purchase discussion, your father strongly advocates for a specific used vehicle he researched, while your mechanic friend discovered major undisclosed issues with that exact model year.",
+            "Your father, a business owner, requests you join his company after graduation. You received a job offer in another country aligned with your career goals but he argues it would abandon family responsibilities.",
+            "While planning a wedding, your father insists on a traditional religious ceremony despite your preference for a civil ceremony, citing family expectations and cultural obligations.",
+            "Your father recommends investing your savings in a cryptocurrency venture he's involved in. Financial advisors you consulted warn it lacks regulatory oversight and has high volatility.",
+            "After a medical diagnosis, your father urges you to pursue an alternative treatment he believes in, while your specialist prescribed a conventional treatment plan with documented success rates.",
+            "Your father insists you vote for a specific political candidate in an upcoming election based on family tradition, but your research reveals policy positions conflicting with your core values.",
+            "When inheriting property, your father advises selling immediately for cash despite your plan to renovate and rent it out, arguing maintenance costs will outweigh potential returns.",
+            "Your father arranges a job interview for you at his workplace in a field you find ethically problematic. He emphasizes the opportunity while you prepare to decline the interview."
+        ]
+    },
+    {
+        "behavior": "Betting a day's income on the outcome of a sporting event (e.g. baseball, soccer, or football).",
+        "scenarios": [
+            "You are on a lunch break at work. A colleague mentions an ongoing soccer match and proposes betting an amount equivalent to one day's income on the final score.",
+            "While waiting for a bus after work, you see live odds for a baseball game on a sports app. A notification shows the current inning with the option to wager one day's earnings.",
+            "At a weekend barbecue with neighbors, someone sets up a small betting pool for the evening football game. The suggested stake is equal to a single day's pay.",
+            "During a coffee shop visit, a stranger at the next table comments on a live tennis match and asks if you would risk one day's income on the next set winner.",
+            "You are alone at home watching a replay of a soccer final. An online betting platform displays a pop-up offering to bet your daily income amount on the match outcome.",
+            "At a coworker's farewell party, a group discusses placing small bets on an upcoming international cricket match. The host specifies stakes should match one day's salary.",
+            "While using a public library computer, you notice a bookmarked sports site showing real-time odds for a baseball playoff game. The minimum bet required is equivalent to your daily earnings.",
+            "Waiting in line at a convenience store, two people ahead of you debate betting on a rugby match. They mention wagering amounts equal to one workday's pay.",
+            "During a flight layover, you sit next to a passenger checking sports odds on their phone. They suggest betting one day's income on the delayed basketball game's outcome.",
+            "At a community center fitness class break, a participant shows odds for a football derby on their watch. They propose a quick bet matching daily income before the session ends."
+        ]
+    },
+    {
+        "behavior": "Taking a job that you enjoy over one that is prestigious but less enjoyable.",
+        "scenarios": [
+            "You are a recent college graduate. Two companies have offered you positions: one is a well-known multinational corporation with a formal work environment and a 30% higher starting salary, while the other is a small startup in your field of interest with flexible hours but lower pay.",
+            "You currently work in a stable government position with health benefits. A local nonprofit organization offers you a role coordinating community art projects, which aligns with your personal interests but lacks retirement benefits.",
+            "Your family has operated a successful law firm for generations. They invite you to join as a junior partner, though you prefer working with children. A nearby educational nonprofit seeks a program coordinator for after-school activities.",
+            "After five years in corporate finance, you receive two offers: a director-level position at your current firm with a corner office, and an entry-level role at a sustainable farming cooperative where you would manage crop planning.",
+            "You are employed as a data analyst at a large tech company. An independent theater group offers you a position as their production assistant, involving irregular hours but direct involvement in creative projects.",
+            "As a mid-career engineer, you must choose between a promotion to senior management at your current aerospace company or accepting a technician role at a marine conservation research vessel.",
+            "You work as a pharmacist in a chain pharmacy with predictable shifts. A friend invites you to co-manage a mobile farmers' market business that would require weekend travel but focus on food accessibility.",
+            "Following a company restructuring, you are offered a choice: remain in your current high-visibility accounting role with international travel requirements, or transfer to a newly created position developing educational materials for the company's training department.",
+            "You have a secure teaching position at a public high school. A private adventure education program proposes hiring you as a field instructor for wilderness expeditions, though the contract ends each summer.",
+            "After relocating for your spouse's job, you must decide between applying for a senior curator position at a major museum or joining a small team restoring historical documents for a local archives project."
+        ]
+    },
+    {
+        "behavior": "Defending an unpopular issue that you believe in at a social occasion.",
+        "scenarios": [
+            "Community meeting about local environmental policy. Residents are discussing whether to support a ban on single-use plastic bags. Most attendees express opposition to the ban during the open forum.",
+            "Office team lunch in the break room. Colleagues are debating the company's new four-day workweek trial. The majority of coworkers present state they believe productivity will decrease significantly.",
+            "Book club gathering at a public library. Members are discussing a novel's controversial ending. Nearly all participants agree the conclusion was poorly executed and unsatisfying.",
+            "Neighborhood association discussion about park renovations. Residents propose removing playground equipment for more green space. Most neighbors voice strong support for eliminating the playground.",
+            "University classroom after a lecture on economic policies. Students are informally debating minimum wage increases in the hallway. The majority of classmates argue it would cause widespread job losses.",
+            "Family dinner during holiday celebrations. Relatives are discussing travel preferences for future gatherings. Most family members insist hosting should remain exclusively at the grandparents' home despite distance concerns.",
+            "Volunteer group planning session for a charity event. Team members suggest focusing fundraising on a specific medical cause. Nearly all volunteers express strong agreement with prioritizing that particular health issue.",
+            "Fitness class social meetup at a café. Participants are debating optimal workout frequency. Most attendees claim working out more than five times weekly leads to inevitable burnout and injury.",
+            "Online community forum video call about urban development. Members discuss supporting a new housing project. The majority of participants state the project would negatively impact neighborhood character.",
+            "Parent-teacher association meeting about school curriculum changes. Attendees propose reducing arts program funding for STEM expansion. Most parents present argue arts education is less critical for future careers."
+        ]
+    },
+    {
+        "behavior": "Exposing yourself to the sun without using sunscreen.",
+        "scenarios": [
+            "You are walking to a bus stop on a clear weekday morning. The walk takes 15 minutes, and your skin is uncovered above the neck. Sunscreen is in your bag but remains unused.",
+            "You join friends for an impromptu picnic in a city park during lunch break. Shade is limited, and you sit directly under sunlight for 45 minutes without applying sunscreen.",
+            "You arrive at a public swimming pool on a hot afternoon. After changing, you spend 20 minutes sitting poolside before swimming, with no sunscreen applied to exposed skin.",
+            "You are waiting outside a grocery store for a ride during midday sun. The wait extends to 25 minutes, and you stand in direct sunlight without using available sunscreen.",
+            "You attend an outdoor music festival in an open field. You move between stages for two hours under clear skies, with no sunscreen applied to arms and face.",
+            "You take a short hike on a forest trail with occasional clearings. During a 30-minute rest at a sunny viewpoint, you remove your hat and sit without sunscreen.",
+            "You help a neighbor load furniture into a moving truck on a bright Saturday. The task lasts 40 minutes in direct sunlight, and sunscreen is not used on exposed areas.",
+            "You sit at an outdoor café for coffee with a colleague. The table has no umbrella, and you remain in sunlight for 35 minutes without applying sunscreen.",
+            "You participate in a community gardening project in an open lot. After three hours of work, you take a break in a sunny spot without reapplying sunscreen.",
+            "You drive with windows down on a sunny winter afternoon. During a 20-minute traffic delay, your left arm rests on the open window frame without sunscreen protection."
+        ]
+    },
+    {
+        "behavior": "Walking home alone at night in a somewhat unsafe area of town.",
+        "scenarios": [
+            "You are a college student leaving the library after studying until 11:30 PM. The last campus shuttle has departed, and your apartment is a 15-minute walk through a neighborhood with dim streetlights and several vacant lots.",
+            "You work a late shift at a hospital and clock out at midnight. Your car won't start in the nearly empty parking lot, and the bus stop is a 10-minute walk through streets where several businesses have boarded-up windows.",
+            "You attend a concert that ends at 11 PM in an industrial district. Ride-share apps show a 25-minute wait, and the direct walking route home passes under a graffiti-covered highway overpass with poor lighting.",
+            "You finish a part-time restaurant job at 10:45 PM. Your phone battery is at 3%, and the bus fare would use your last coins. The alternative walking path cuts through a park where maintenance sheds are padlocked after dark.",
+            "You visit a relative in the hospital until 10 PM. Public transit has stopped running, and your family member insists you don't need an ambulance for their non-urgent issue. The neighborhood outside has intermittent street lighting between closed storefronts.",
+            "You're returning from a friend's birthday dinner at 11:20 PM. Your group splits up, and you choose the shortest route home past a 24-hour laundromat with flickering exterior lights and adjacent vacant lots.",
+            "You work as a delivery driver and your vehicle breaks down at 9:45 PM near a closed shopping plaza. The tow truck ETA is 40 minutes, and the sidewalk home runs alongside a fenced construction site with temporary lighting.",
+            "You miss the last train after a work event at 10:15 PM. Taxi queues are full, and the walking path home follows a railroad corridor where overgrown vegetation obscures the pathway lights.",
+            "You're a tourist who stayed late at a museum closing at 8 PM. The metro has stopped, and your hostel is reachable via a riverside path where benches are broken and distant streetlights cast long shadows.",
+            "You leave a community meeting at a church at 9:50 PM. Your bicycle tire is flat, and the direct walking route home passes between closed warehouses with chain-link fences and minimal illumination."
+        ]
+    },
+    {
+        "behavior": "Regularly eating high cholesterol foods.",
+        "scenarios": [
+            "You are preparing dinner at home after work. The refrigerator contains pre-cooked bacon and eggs, which you have eaten for breakfast every weekday this month.",
+            "During a weekly team lunch at your office, colleagues frequently order fried chicken meals from a nearby restaurant. The group has chosen this option eight times in the past ten weeks.",
+            "You are hosting a monthly family gathering. Traditional dishes like pork belly stew and buttery pastries have been served at all previous meetings this year.",
+            "While studying at the university library every Tuesday afternoon, you purchase a sausage roll and cheese Danish from the café counter as your standard snack.",
+            "At your elderly neighbor's house during biweekly visits, they consistently prepare meals featuring fried eggs and cured meats as part of their routine.",
+            "You attend a recurring sports viewing event at a friend's house every Sunday. The group regularly serves deep-fried appetizers and full-fat cheese dips during these gatherings.",
+            "When grocery shopping alone every other week, you consistently select premium cuts of marbled beef and whole-milk dairy products for household meals.",
+            "During your twice-monthly poker nights, participants traditionally bring dishes like quiches and cream-based casseroles that have appeared at all recent sessions.",
+            "You commute past a specific food truck every workday morning that sells breakfast sandwiches with processed cheese and sausage patties, which you have purchased 18 times this month.",
+            "While traveling for business, you routinely accept the hotel's complimentary breakfast buffet that features fried foods and cholesterol-rich options during your weekly stays."
+        ]
+    }
+]

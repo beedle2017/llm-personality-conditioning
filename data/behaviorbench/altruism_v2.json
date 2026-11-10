@@ -1,0 +1,152 @@
+[
+    {
+        "behavior": "help push a friend's car out of the snow.",
+        "scenarios": [
+            "You are leaving your apartment building on a snowy morning. A neighbor you recognize from the hallway is trying to push their car out of a snowbank in the parking lot.",
+            "After finishing grocery shopping, you walk to your car in the supermarket parking lot. A coworker from your office waves at you while their vehicle is stuck in deep snow near yours.",
+            "You exit a community center after an evening class. A person who sits next to you in the weekly language course is attempting to free their car from snow accumulation in the lot.",
+            "While returning from a pharmacy on a snowy afternoon, you see a fellow parent from your child's school struggling to push their sedan out of a snow-covered parking space near the sidewalk.",
+            "You arrive at a shared office building entrance during a snowstorm. An acquaintance from a recurring professional workshop is clearing snow around their immobilized car near the entrance ramp.",
+            "After a weekend ski trip, you unload your gear in the mountain lodge parking area. A friend from your hiking group motions for help as their SUV is stuck in packed snow near the trailhead lot.",
+            "You park your car on a residential street after visiting a local library. A person who regularly walks their dog in your neighborhood is pushing against their sedan's rear bumper in a snow-filled driveway.",
+            "During a coffee break at a neighborhood café, you notice through the window that a regular at your morning yoga class is trying to rock their compact car free from a snowdrift across the street.",
+            "You finish a volunteer shift at a community garden in snowy weather. A fellow volunteer who helps with weekend planting is attempting to push their hatchback out of a snowbank near the garden entrance.",
+            "While waiting for a bus at a transit hub after work, you see an acquaintance from your book club waving from their stranded car in a snow-packed parking area adjacent to the bus stop."
+        ]
+    },
+    {
+        "behavior": "give money to a friend who needed it (or asked me for it).",
+        "scenarios": [
+            "You and a college classmate are studying at the library when they mention their laptop charger was stolen, and they need to buy a replacement before tomorrow's presentation.",
+            "While waiting for the bus, your neighbor from two floors down explains their paycheck was delayed and they don't have cash for today's groceries.",
+            "During a team lunch meeting, a coworker realizes they left their wallet at home and need to cover their $15 meal share.",
+            "Your gym acquaintance mentions their car broke down this morning and they're short $20 for the bus fare to get to work.",
+            "At a community volunteer event, a fellow organizer confides they can't afford the $30 registration fee for their child's upcoming school trip.",
+            "While returning books at the public library, your book club member says they forgot their library card and need $5 to pay overdue fines before checking out new books.",
+            "Your former roommate texts you saying their bank account is temporarily frozen and they need $40 to refill their prescription medication today.",
+            "During a neighborhood potluck, a nearby resident mentions their water heater just broke and they're $75 short for the emergency repair deposit.",
+            "At a coffee shop, your study group partner shows you an unexpected $60 parking ticket they can't pay before the deadline.",
+            "While waiting in line at the movie theater, a coworker from another department says they were just laid off and need bus fare home since their ride canceled."
+        ]
+    },
+    {
+        "behavior": "help carry a friend's belongings (books, parcels, etc.).",
+        "scenarios": [
+            "You are walking across a university campus between classes. A classmate is struggling to balance a large stack of textbooks and a laptop while trying to open a classroom door.",
+            "You are in an office elevator lobby holding your coffee. A coworker approaches with both hands full of file folders, a laptop bag, and a cardboard box.",
+            "You are exiting a grocery store with your own shopping bags. A neighbor from your apartment building is loading reusable bags into their car trunk while balancing a fragile bakery box.",
+            "You are waiting at a bus stop during evening commute. A friend from your book club arrives carrying a heavy suitcase and a backpack while checking the bus schedule.",
+            "You are leaving a public library with your borrowed books. A study group acquaintance is attempting to carry multiple library books while holding an umbrella in the rain.",
+            "You are walking through a residential neighborhood. A friend is moving furniture into a new apartment and is carrying two large cardboard boxes toward a moving van.",
+            "You are at a community center after a volunteer meeting. An acquaintance is trying to transport folding chairs while holding event supplies and a water bottle.",
+            "You are in a parking garage after work. A coworker is attempting to load several large office supply boxes into their vehicle's trunk space.",
+            "You are walking down a sidewalk during a sudden downpour. A neighbor is hurrying with grocery bags and a package while holding a dripping umbrella.",
+            "You are at a shared workspace common area. A project team member is gathering materials including a printer cartridge, reams of paper, and a monitor for relocation."
+        ]
+    },
+    {
+        "behavior": "delay an elevator and held the door open for a friend.",
+        "scenarios": [
+            "You are in an elevator in an office building heading to a meeting. The elevator doors begin to close when you see a coworker you know running down the hallway toward the elevator.",
+            "You are on the elevator in a hospital after a routine check-up. As the doors start closing, a friend from your support group walks into view carrying a small bag of personal items.",
+            "You are exiting your apartment building's elevator on the ground floor with luggage. The doors are about to shut when a neighbor you often greet approaches from the mailroom.",
+            "You are in a residential elevator holding multiple grocery bags. The doors begin closing as a neighbor you recognize comes into sight carrying shopping bags from the same store.",
+            "You are in a mall elevator surrounded by shoppers. The doors start to close when you spot a friend walking toward the elevator with several shopping bags in hand.",
+            "You are leaving a gym in an elevator after your workout. The doors begin closing as a regular gym acquaintance you know by name jogs toward the elevator entrance.",
+            "You are in an elevator at a coffee shop building heading downstairs. The doors start to close when you see a friend approaching from the café area holding a coffee cup.",
+            "You are in a university library elevator with study materials. The doors begin closing as a classmate you often see in lectures walks into the elevator's line of sight.",
+            "You are in a movie theater complex elevator after purchasing tickets. The doors start to close when a friend you recognize from the ticket line appears at the elevator bank.",
+            "You are in a parking garage elevator heading to your car. The doors begin closing as a coworker you know walks toward the elevator carrying a briefcase."
+        ]
+    },
+    {
+        "behavior": "allow friend to go ahead of me in a lineup (at Xerox machine, in the supermarket).",
+        "scenarios": [
+            "You are waiting in line at the office copy machine to print documents. A coworker you regularly have lunch with approaches and needs to make urgent copies for a meeting starting in 5 minutes.",
+            "You are next in line at the supermarket checkout counter with a few items. A neighbor you know from the building's social events joins the end of the line holding a prescription that needs immediate pickup.",
+            "You are queuing at a public library self-service printer to collect your thesis pages. A classmate from your evening course arrives and needs to print boarding passes before their flight departure.",
+            "You are waiting to use a shared coffee machine in a co-working space during peak hours. A freelancer you've collaborated with on projects enters and needs coffee before a client call in 10 minutes.",
+            "You are in line at a food truck festival with multiple stalls. A colleague from another department approaches while you're waiting for tacos and needs to get back to work before a deadline.",
+            "You are queuing at a post office counter for package mailing. A friend from your book club joins the line behind you holding time-sensitive election mail.",
+            "You are waiting at a pharmacy counter to pick up medication. An acquaintance from your gym class arrives and needs to collect a child's prescription before daycare closes.",
+            "You are in line at a campus student center photocopy station during exam week. A study group member you know approaches needing to copy lecture notes for an afternoon class.",
+            "You are waiting to use a shared microwave in an office kitchenette. A teammate from your volunteer group enters holding lunch that must be eaten before their shift starts.",
+            "You are queuing at a museum ticket counter on a busy weekend. A friend from your language exchange meetup joins the line behind you with timed-entry tickets expiring soon."
+        ]
+    },
+    {
+        "behavior": "give a friend a lift in my car.",
+        "scenarios": [
+            "You are leaving your workplace parking lot when you see a friend waiting at the bus stop as rain begins to fall heavily.",
+            "While driving home from grocery shopping, you notice a friend walking slowly on the sidewalk carrying multiple heavy bags.",
+            "Your acquaintance is standing at a bus stop checking their watch repeatedly after missing their scheduled bus.",
+            "You exit a community center after an evening class and observe a friend trying to call a ride service in cold weather.",
+            "After finishing coffee at a café, you see a friend looking at a transit app with a concerned expression while holding work documents.",
+            "You are driving past a park where a friend is walking briskly in formal attire as dark clouds gather overhead.",
+            "Leaving a social event late at night, you spot a friend waiting alone outside the venue where public transport has stopped running.",
+            "While refueling your car at a gas station, a friend approaches on foot wiping sweat in hot weather while heading toward downtown.",
+            "You park near a library and see a friend struggling with stacked books and a laptop bag while heading toward a distant bus stop.",
+            "Driving through a residential area during a snowstorm, you notice a friend walking carefully on an unplowed sidewalk with shopping bags."
+        ]
+    },
+    {
+        "behavior": "let a familiar neighbour borrow an item of some value to me (e.g., a dish, tools, etc.).",
+        "scenarios": [
+            "You are watering plants on your apartment balcony when a neighbor from the same building asks if they can borrow your ceramic mixing bowl because theirs cracked while preparing dinner for guests.",
+            "While taking out trash in the shared courtyard, a neighbor mentions their power drill battery died mid-project and asks to borrow your cordless drill to finish assembling a bookshelf.",
+            "You're unpacking groceries in the building lobby when a neighbor requests to borrow your stainless steel roasting pan for an unexpected family gathering happening that evening.",
+            "As you lock your bicycle in the communal storage room, a neighbor asks if they can temporarily use your specialized gardening shears to prune overgrown rose bushes before a storm arrives.",
+            "You're collecting mail in the hallway when a neighbor explains their ladder collapsed and asks to borrow yours to replace a burnt-out hallway lightbulb in their unit.",
+            "While walking dogs in the building's pet area, a neighbor asks to borrow your cast-iron skillet because theirs warped during holiday cooking preparations.",
+            "You're shoveling snow from the building's entrance when a neighbor requests your snow blower because their elderly parent unexpectedly arrived and they need to clear the driveway quickly.",
+            "As you organize tools in the shared basement storage, a neighbor asks to borrow your heavy-duty extension cord to power temporary lighting for a community event setup.",
+            "You're hanging laundry in the common drying area when a neighbor explains their washing machine flooded and asks to borrow your portable dehumidifier to prevent mold.",
+            "While returning library books to the building's book exchange shelf, a neighbor asks to borrow your adjustable wrench because their sink faucet started leaking urgently."
+        ]
+    },
+    {
+        "behavior": "help a familiar classmate with a homework assignment when my knowledge was greater than his or hers.",
+        "scenarios": [
+            "You are reviewing notes after a calculus lecture when a classmate from the same course approaches and asks for clarification on integration techniques you covered in your previous semester.",
+            "During a group study session for a biology midterm, a classmate working on genetics problems requests your assistance with Punnett square calculations since you recently completed an advanced genetics module.",
+            "While waiting in line for coffee before a statistics class, a classmate shows you their incomplete regression analysis homework and asks for help interpreting scatter plot data you both learned last week.",
+            "A classmate messages you via the university's learning platform the night before a chemistry assignment deadline, seeking guidance on balancing chemical equations you practiced extensively in lab.",
+            "In the campus library computer lab, a classmate working on a programming assignment asks you to debug their Python code since you scored highest on the recent coding assessment.",
+            "After an economics seminar, a classmate approaches you near the department bulletin board requesting help with supply-demand graph construction for homework due tomorrow, noting your strong performance in quantitative methods.",
+            "While waiting for the bus after campus, a classmate shows you their incomplete sociology theory worksheet and asks for explanations of concepts you presented during last week's tutorial session.",
+            "During a break in the engineering design workshop, a classmate working on CAD modeling homework requests your input on dimensioning standards since you completed the prerequisite drafting course with honors.",
+            "A classmate stops you at the campus print station while you're submitting your own assignment, asking for help formatting citations in APA style for their psychology paper as you previously shared your reference guide.",
+            "In the university cafeteria between classes, a classmate shows you their incomplete financial accounting homework and requests clarification on journal entries since you worked as a teaching assistant for introductory accounting last term."
+        ]
+    },
+    {
+        "behavior": "before being asked, voluntarily look after a familiar neighbour's pets or children without being paid for it.",
+        "scenarios": [
+            "You are watering plants on your balcony when you see your neighbor across the street rushing to their car with a dog leash but forgetting to secure their dog, which is near the open front gate.",
+            "While taking out trash in the evening, you notice your neighbor struggling to carry grocery bags while simultaneously trying to keep their young child from running toward the street near parked cars.",
+            "You observe your elderly neighbor leaving their apartment building in a hurry for a medical appointment, accidentally leaving their apartment door slightly ajar with their cat visible inside through the window.",
+            "During a sudden downpour, you see your neighbor's school-aged child waiting alone at the bus stop without rain protection while their parent's car is double-parked nearby with hazard lights on.",
+            "You witness your neighbor attempting to load furniture into a moving van while their toddler sits unattended on the sidewalk near active construction equipment.",
+            "While walking your own dog in the morning, you notice your neighbor's dog scratching at the back door of their house which appears empty, with the neighbor's work vehicle still parked in the driveway.",
+            "You see your neighbor's preschooler wandering near the community pool gate during off-hours while the neighbor is preoccupied with a phone call on their porch two houses away.",
+            "While returning home with groceries, you observe your neighbor's teenager trying to manage two barking dogs on leashes while simultaneously unlocking their apartment door with difficulty.",
+            "During a neighborhood power outage, you notice your neighbor's infant monitor light blinking erratically through their window as they rush toward a neighbor's house for help.",
+            "You spot your neighbor's child repeatedly dropping school supplies while trying to balance a heavy backpack and hold a leash for an excitable puppy outside the elementary school entrance."
+        ]
+    },
+    {
+        "behavior": "help an friend to move households.",
+        "scenarios": [
+            "You are at a coffee shop when a classmate you know mentions they need to move apartments this weekend and asks if you can help carry boxes.",
+            "While waiting for the bus, a coworker tells you they are relocating to a new apartment tomorrow and requests assistance with moving furniture.",
+            "During a community garden meeting, a neighbor you occasionally chat with says they must move out of their current house in two days and needs help loading a truck.",
+            "At a gym locker room, someone you recognize from regular classes explains they are moving to a smaller studio apartment next week and asks for help disassembling a bed frame.",
+            "After a book club gathering, a member mentions they have to vacate their rental unit by Sunday and inquires if you could assist with transporting boxes to their new place.",
+            "While returning library books, a frequent study partner approaches you saying their lease ends in 48 hours and they need help moving boxes to a friend's car.",
+            "At a dog park, a person you often see there notes they are moving residences next Saturday and asks whether you might have time to help with heavy items.",
+            "During a neighborhood association event, a local resident you know by name states they must move household items before noon tomorrow and requests aid with搬运.",
+            "After a yoga class, someone from your regular session mentions they are relocating across town this evening and asks if you can spare an hour to help load bags.",
+            "While shopping at a grocery store, an acquaintance from your apartment building says they need to move out by tonight and inquires if you could help carry boxes to their vehicle."
+        ]
+    }
+]

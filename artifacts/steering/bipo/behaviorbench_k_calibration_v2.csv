@@ -1,0 +1,13 @@
+method,trait,layer,k,slope,spearman,invalid_rate,n,seed
+bipo_v2_k_sweep,openness,15,0.25,0.024999999999999984,1.0,0.0,20,20261026
+bipo_v2_k_sweep,openness,15,0.5,0.05000000000000001,1.0,0.0,20,20261026
+bipo_v2_k_sweep,openness,15,1.0,0.05000000000000001,1.0,0.0,20,20261026
+bipo_v2_k_sweep,openness,15,2.0,0.075,1.0,0.0,20,20261026
+bipo_v2_k_sweep,openness,15,4.0,0.075,1.0,0.0,20,20261026
+bipo_v2_k_sweep,openness,15,8.0,0.0,0.0,0.0,20,20261026
+bipo_v2_k_sweep,conscientiousness,15,0.25,-2.814929138878541e-17,nan,0.0,20,20261026
+bipo_v2_k_sweep,conscientiousness,15,0.5,-2.814929138878541e-17,nan,0.0,20,20261026
+bipo_v2_k_sweep,conscientiousness,15,1.0,-2.814929138878541e-17,nan,0.0,20,20261026
+bipo_v2_k_sweep,conscientiousness,15,2.0,0.025000000000000005,1.0,0.0,20,20261026
+bipo_v2_k_sweep,conscientiousness,15,4.0,0.06250000000000001,0.9933992677987828,0.0,20,20261026
+bipo_v2_k_sweep,conscientiousness,15,8.0,-inf,nan,1.0,20,20261026

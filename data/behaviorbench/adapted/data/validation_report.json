@@ -1,0 +1,87 @@
+{
+  "total_items": 510,
+  "total_groups": 43,
+  "split_counts": {
+    "development": 340,
+    "test": 170
+  },
+  "counts_by_trait": {
+    "Openness": {
+      "development": {
+        "items": 70,
+        "groups": 7
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Conscientiousness": {
+      "development": {
+        "items": 70,
+        "groups": 7
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Extraversion": {
+      "development": {
+        "items": 80,
+        "groups": 8
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Agreeableness": {
+      "development": {
+        "items": 70,
+        "groups": 7
+      },
+      "test": {
+        "items": 30,
+        "groups": 3
+      }
+    },
+    "Neuroticism": {
+      "development": {
+        "items": 50,
+        "groups": 1
+      },
+      "test": {
+        "items": 50,
+        "groups": 1
+      }
+    }
+  },
+  "checks": {
+    "group_overlap": [],
+    "exact_scenario_duplicate_clusters": [],
+    "cross_split_near_duplicate_candidates": [],
+    "near_duplicate_threshold": 0.9,
+    "semantic_leakage_guaranteed_absent": false
+  },
+  "self_control_polarity": {
+    "development": {
+      "direct": 30,
+      "reverse": 40
+    },
+    "test": {
+      "direct": 20,
+      "reverse": 10
+    }
+  },
+  "heuristic_choice_position": {
+    "availability": {
+      "A": 50
+    },
+    "representativeness": {
+      "B": 50
+    }
+  },
+  "semantic_review_pending": 510,
+  "context_annotation_pending": 510
+}

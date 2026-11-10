@@ -1,0 +1,6 @@
+{
+  "method": "bipo",
+  "layer": 15,
+  "seed": 20261026,
+  "runtime": "unquantized torch.float16 fallback"
+}

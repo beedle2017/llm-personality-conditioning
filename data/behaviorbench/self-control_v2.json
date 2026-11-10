@@ -1,0 +1,162 @@
+[
+    {
+        "behavior": "Resist temptation.",
+        "scenarios": [
+            "You are working at your desk during a lunch break. A colleague brings in a box of freshly baked chocolate chip cookies and offers you one. Your own prepared lunch is in the refrigerator.",
+            "While grocery shopping, you pass the checkout lane where candy bars and chips are displayed. You have already selected all planned items in your cart.",
+            "You are studying in a library with your laptop. A notification pops up about a limited-time video game sale offering 80% off a title you've wanted. Your exam is in two days.",
+            "At a family dinner, dessert platters with cheesecake and brownies are being passed around. You had decided earlier to skip sweets tonight.",
+            "You receive an email notification that your favorite online store has a 24-hour flash sale on items in your saved wishlist. You are currently reviewing your monthly budget spreadsheet.",
+            "During a work meeting, your phone vibrates repeatedly with messages from a group chat about weekend plans. The meeting agenda has 15 minutes remaining.",
+            "You are walking home past a coffee shop known for its seasonal drinks. It's raining and you have 20 minutes before your next appointment. Your wallet contains cash you allocated for transportation only.",
+            "While waiting for a doctor's appointment, you see a vending machine stocked with chips and sodas. You brought a water bottle and healthy snack from home.",
+            "Your fitness app reminds you it's time for a scheduled workout. You are already lying on the couch watching a movie after a long day. Your running shoes are by the door.",
+            "You are reviewing work documents late at night. A social media app icon shows a red notification badge. Your screen time settings indicate you've already used 2 hours today."
+        ],
+        "label": ""
+    },
+    {
+        "behavior": "Keep on schedule.",
+        "scenarios": [
+            "You planned to complete a work report by 3:00 PM. A colleague invites you to join an impromptu coffee break in the break room at 2:45 PM.",
+            "You scheduled 45 minutes for grocery shopping starting at 5:00 PM. Your neighbor asks if you can help assemble furniture immediately when you leave your apartment.",
+            "You committed to studying for an exam from 7:00 PM to 9:00 PM. A new episode of your favorite show becomes available to stream at 7:15 PM.",
+            "You set aside 10:00 AM to 12:00 PM for deep work on a project. A friend messages asking to meet for lunch at 10:30 AM.",
+            "You planned to cook dinner by 6:30 PM. A group chat suggests ordering takeout together right now at 6:10 PM.",
+            "You reserved 8:00 AM to 9:00 AM for morning exercise. Your partner proposes watching a news segment that starts at 8:15 AM.",
+            "You allocated 1:00 PM to 2:00 PM for household chores. A social media notification shows tickets for a concert going on sale at 1:10 PM.",
+            "You committed to writing for 30 minutes starting at 11:00 AM. A coworker stops by your desk with an urgent but non-critical request at 11:05 AM.",
+            "You scheduled a 20-minute walk at 4:00 PM. Rain begins falling heavily at 3:55 PM while you're preparing to leave.",
+            "You planned to review work emails for 15 minutes at 6:00 PM before logging off. A family member asks you to watch a short video they just shared at 6:02 PM."
+        ],
+        "label": ""
+    },
+    {
+        "behavior": "Keep everything neat.",
+        "scenarios": [
+            "You finished cooking dinner and the stovetop has spilled sauce. Dirty dishes are piled in the sink while the clock shows 2:00 AM.",
+            "Your work deadline was due an hour ago. Papers and coffee cups cover your desk as colleagues begin leaving the office for the day.",
+            "After a workout, your damp towel and water bottle sit on the gym locker room bench. The next fitness class starts in 10 minutes.",
+            "You returned from grocery shopping with reusable bags still in the car trunk. The kitchen counter holds unpacked perishables as evening light fades.",
+            "Children's toys and art supplies are scattered across the living room floor. The front door buzzer indicates a food delivery has arrived.",
+            "You're checking out of a hotel room. The bedspread is rumpled and toiletries remain on the bathroom counter while your taxi waits outside.",
+            "Fast food wrappers and empty drink cups accumulate on your car's passenger seat during a long commute. The exit ramp for home appears ahead.",
+            "A shared office refrigerator contains expired containers others left behind. Your lunch container sits empty as you prepare to close the fridge door.",
+            "After a social gathering, used plates and cups occupy the dining table. Streetlights indicate it's past midnight as guests head for the door.",
+            "Laundry baskets overflow with clean clothes needing folding. The television remote rests on the couch arm as your favorite show begins."
+        ],
+        "label": ""
+    },
+    {
+        "behavior": "Persist despite setbacks.",
+        "scenarios": [
+            "You are working on a group project report due tomorrow. After spending two hours writing a section, your computer crashes and you lose all unsaved progress. The draft email with instructions for resubmission is still available.",
+            "You have been practicing a guitar piece for weeks. During today's session, you repeatedly make mistakes on a difficult chord transition despite multiple attempts. Your practice timer shows 30 minutes remaining.",
+            "You are assembling furniture from flat-pack instructions. After completing most steps, you realize a critical part was installed incorrectly and must disassemble three sections to fix it. All tools are still within reach.",
+            "You planted vegetable seeds two weeks ago. This morning you discover animals have dug up half the garden bed. The seed packet indicates optimal replanting time is within 24 hours.",
+            "You've been learning a new language using an app for 15 days straight. Today's lesson shows your accuracy dropped to 40% on vocabulary review. The app displays 'Continue tomorrow's lesson?' prompt.",
+            "You are training for a 5K run. During today's practice, you experience sharp knee pain at the 2-kilometer mark. Your training plan shows tomorrow's session requires 3 kilometers.",
+            "You've been trying to establish a morning meditation routine for 10 days. This morning, your alarm failed to sound and you now have only 15 minutes before work. Your timer app is open on the phone screen.",
+            "You're repairing a leaky faucet. After removing the handle, you strip the screw head and cannot proceed with standard tools. The hardware store closes in 45 minutes.",
+            "You've submitted job applications for three weeks with no responses. While drafting your 15th application, the online form resets after an internet outage. The job posting states applications close in 2 hours.",
+            "You're baking bread using a new recipe. The first two loaves collapsed in the oven due to incorrect rising time. You have enough ingredients remaining for one final attempt before expiration."
+        ],
+        "label": ""
+    },
+    {
+        "behavior": "Think before acting.",
+        "scenarios": [
+            "You are drafting an email at work after receiving critical feedback. The draft includes strong language about a colleague's error. The 'Send' button is visible on the screen.",
+            "While scrolling social media, you see a post that contradicts your views with inaccurate claims. Your fingers hover over the keyboard to type a reply.",
+            "Driving in heavy traffic, the car ahead brakes suddenly. Your foot moves toward the accelerator pedal as you check the rearview mirror.",
+            "Standing at the kitchen counter, you smell something burning in the oven. The recipe instructions for the dish are visible beside you.",
+            "During a disagreement with a family member, you recall a past hurtful comment they made. Your voice is raised and the next words are forming in your mind.",
+            "At a store checkout, you realize the cashier gave you $20 extra in change. The exit doors are 10 feet away and no one is watching.",
+            "Your child is having a public tantrum in a grocery store aisle. Other shoppers are looking toward your cart. The car keys are in your pocket.",
+            "Holding a prescription bottle with dosage instructions, you feel unwell and consider taking an extra pill. The clock shows it's been 4 hours since the last dose.",
+            "Wrapping a gift, you notice the decorative paper is torn near the edge. Scissors and tape are within reach while the recipient waits nearby.",
+            "Facing a project deadline in 30 minutes, you consider submitting an incomplete report. The submission portal shows '0 errors' in the validation check."
+        ],
+        "label": ""
+    },
+    {
+        "behavior": "Have difficulty to break bad habits.",
+        "scenarios": [
+            "It is 7:00 AM on a workday. Your alarm clock has been silenced three times already. The weather outside is cold and rainy, and your next meeting starts in 45 minutes.",
+            "You are sitting at your desk working on an important report due in two hours. An unopened email notification appears with the subject line 'Flash Sale Ends Tonight!'. Your credit card details are saved on the retailer's website.",
+            "During a study session at the library, you place your phone face-down on the table. After 20 minutes, you pick it up to check notifications even though you set a 30-minute focus timer.",
+            "While waiting in line at the grocery store checkout, you notice candy bars and chips displayed next to the register. Your reusable shopping bag contains vegetables you bought earlier for dinner.",
+            "You are watching television in the evening with an empty chip bag on the coffee table. A new bag of chips is visible in the pantry behind you on the kitchen counter.",
+            "At your desk during a lunch break, you open a second social media app after closing the first one five minutes ago. Your half-eaten salad sits beside your keyboard.",
+            "Standing in your kitchen at 11:00 PM, you pour a second serving of ice cream into a bowl. The empty container shows it was purchased yesterday as part of a 'no sweets' resolution.",
+            "During a work video call, you mute your microphone and open a sports betting website in a separate browser tab. Your calendar shows a project deadline reminder for tomorrow morning.",
+            "You are walking home from the bus stop past a coffee shop that sells your favorite pastry. Your wallet contains a loyalty card with 8 stamps already collected toward a free item.",
+            "While folding laundry in your living room, you light a cigarette on the balcony despite an ashtray holding three cigarette butts from this morning. A 'Quit Smoking' pamphlet is visible on the coffee table."
+        ],
+        "label": "R"
+    },
+    {
+        "behavior": "Act impulsively.",
+        "scenarios": [
+            "You are standing in a grocery store checkout line with purchased items, noticing candy displays near the register.",
+            "You are sitting at a restaurant table after finishing a meal, presented with a dessert menu by the server.",
+            "You are scrolling through a social media feed during a break, where a short video appears in the timeline.",
+            "You are holding a credit card while receiving a mobile notification about a limited-time online sale.",
+            "You are walking past an arcade with visible prize redemption counters and active game machines.",
+            "You are driving past a fast-food restaurant with illuminated menu boards showing current promotions.",
+            "You are receiving an email notification about a colleague's critical comment on a work document during office hours.",
+            "You are holding a remote control while watching television, with a commercial break starting.",
+            "You are standing in a bookstore browsing section with newly released titles prominently displayed on tables.",
+            "You are sitting at a bus stop bench with a vending machine selling snacks and beverages within arm's reach."
+        ],
+        "label": "R"
+    },
+    {
+        "behavior": "Get carried away by feelings.",
+        "scenarios": [
+            "You are driving during rush hour when another vehicle suddenly cuts you off. The driver gestures aggressively toward you as they speed away.",
+            "While scrolling through social media, you see a post from an acquaintance that directly contradicts your strongly held belief about a current event.",
+            "Your young child has repeatedly refused to eat dinner and throws their plate onto the floor for the third time this week.",
+            "During a work meeting, a colleague interrupts your presentation to state that your proposed solution is fundamentally flawed without reviewing your data.",
+            "You discover a limited-edition item you've wanted for months is available online, but the website indicates only two remain in stock.",
+            "While practicing a musical instrument alone, you make the same mistake repeatedly during a difficult passage after 30 minutes of unsuccessful attempts.",
+            "You're watching a competitive sports game with friends when a referee makes a call that clearly benefits the opposing team in a critical moment.",
+            "At a family gathering, a relative asks a personal question about your life choices that you've previously asked them not to discuss.",
+            "A customer service representative informs you that your delayed package cannot be expedited despite your explanation of urgent need.",
+            "While waiting in line at a coffee shop, someone cuts in front of you and ignores your verbal request to respect the queue order."
+        ],
+        "label": "R"
+    },
+    {
+        "behavior": "Let pleasure interfere with work.",
+        "scenarios": [
+            "You are working on a time-sensitive spreadsheet at your office desk. A notification appears showing a new episode of your favorite show is available to stream.",
+            "While studying for an upcoming exam at the library, your phone buzzes with a group chat invitation to join friends for an impromptu lunch.",
+            "You are drafting an important email response during remote work hours. Your gaming console powers on automatically with a friend request notification.",
+            "During a scheduled work block at a coffee shop, the barista offers you a free sample of a new dessert item they just prepared.",
+            "You are editing a document with a two-hour deadline. Colleagues nearby start discussing weekend travel plans in an animated conversation.",
+            "While completing online coursework at home, a delivery arrives containing a pre-ordered video game you've been anticipating.",
+            "You are analyzing data in a shared workspace. A coworker places a puzzle book they brought for breaks on your desk within arm's reach.",
+            "During a work-from-home session, your fitness tracker alerts you about ideal weather conditions for an outdoor run visible through the window.",
+            "You are preparing a presentation with colleagues in a meeting room. Someone brings in freshly baked cookies from a nearby bakery.",
+            "While working on budget reports at your kitchen table, a streaming service notification indicates your preferred music artist has released a new album."
+        ],
+        "label": "R"
+    },
+    {
+        "behavior": "Have trouble concentrating.",
+        "scenarios": [
+            "You are working on a report at your desk in an open-plan office. A group of colleagues nearby is having a loud conversation about weekend plans.",
+            "You are studying in a coffee shop with textbooks spread out on the table. The barista is loudly calling out drink orders every few minutes.",
+            "You are attempting to read a legal document at home. Your roommate is vacuuming the living room directly adjacent to where you're seated.",
+            "You are filling out an online tax form on your laptop at the kitchen table. Multiple browser tabs with news alerts are popping up on your screen.",
+            "You are practicing a musical instrument in your bedroom. Construction work is happening outside your window with intermittent hammering sounds.",
+            "You are reviewing meeting notes on your phone while waiting for a bus at a busy street corner with constant traffic noise.",
+            "You are trying to memorize vocabulary flashcards in a library study room. Another student enters and begins typing rapidly on a mechanical keyboard.",
+            "You are writing an email response during a video conference call. Your pet is persistently scratching at the door to go outside.",
+            "You are analyzing data spreadsheets in a coworking space. People are walking past your table frequently while discussing project ideas.",
+            "You are preparing a presentation at a park bench. Children playing soccer nearby are shouting and running across the field directly in your line of sight."
+        ],
+        "label": "R"
+    }
+]
