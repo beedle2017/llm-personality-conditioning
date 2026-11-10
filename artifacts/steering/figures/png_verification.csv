@@ -1,7 +1,6 @@
 file,bytes,pixel_std,pass
-behaviorbench_dose_response.png,183003,35.711435326381164,True
-context_heatmap.png,95050,54.17236569421488,True
-dose_response.png,218283,35.03913008638446,True
-invalid_rates.png,65103,35.466864296690865,True
-k_calibration.png,119640,38.31790576426665,True
-layer_sweep.png,69389,68.4304834213931,True
+context_heatmap.png,96861,51.31411340242902,True
+dose_response.png,188597,35.585502183221195,True
+invalid_rates.png,50741,32.38901819749814,True
+k_calibration.png,113133,38.43765807822898,True
+layer_sweep.png,52096,82.17116310188709,True
