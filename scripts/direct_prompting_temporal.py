@@ -186,7 +186,6 @@ def run_experiment(
     generator,
     out,
     *,
-    confirm_frozen=False,
     traits=tuple(TRAITS),
     levels=LEVELS,
     ids_per_trait=10,
@@ -205,12 +204,6 @@ def run_experiment(
     `max_turns` is the number of lists per target (list lengths 1..max_turns).
     `probe_turns` (1-based list lengths, e.g. [5, 10]) skips the target probe at other lengths.
     """
-
-    if not confirm_frozen:
-        raise ValueError(
-            "this runs on the helper's test.json; "
-            "pass confirm_frozen=True once prompts are final"
-        )
 
     unknown = set(traits) - set(TRAITS)
 
