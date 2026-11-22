@@ -18,6 +18,7 @@ import argparse
 import itertools
 import json
 import random
+import sys
 from pathlib import Path
 
 from direct_prompting import DEFAULT_SEED, persona_messages
