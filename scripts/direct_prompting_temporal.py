@@ -8,7 +8,7 @@ k-1 question/answer pairs as context.
 Only persona-conditioned conversations are run. The target personality is
 specified in the system prompt once, at the start of each conversation.
 
-One conversation is built per (target trait, level).
+One conversation is built per (target item, level).
 Within a trait, every conversation sees the SAME item order (shuffled by seed),
 so level comparisons are paired by item AND by position.
 
@@ -255,12 +255,6 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
-        "--confirm-frozen",
-        action="store_true",
-        help="required: the helper's data file is the test split",
-    )
-
-    parser.add_argument(
         "--traits",
         nargs="+",
         choices=list(TRAITS),
@@ -329,9 +323,6 @@ def main():
 
     args = parser.parse_args()
 
-    if not args.confirm_frozen:
-        parser.error("--confirm-frozen is required: the helper's data file is the test split")
-
     from rewriting.llm import MODEL_ID, HFGenerator
 
     generator = HFGenerator.load(
@@ -342,7 +333,6 @@ def main():
     run_experiment(
         generator,
         args.out,
-        confirm_frozen=True,
         traits=args.traits,
         levels=args.levels,
         ids_per_trait=args.ids_per_trait,
