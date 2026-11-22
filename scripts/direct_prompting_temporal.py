@@ -1,4 +1,3 @@
-
 """Multi-turn direct persona prompting
 
 Every question is asked inside one growing conversation. After each question,
@@ -16,39 +15,66 @@ so level comparisons are paired by item AND by position.
 """
 
 import argparse
+import itertools
 import json
 import random
 from pathlib import Path
 
-from direct_prompting import DEFAULT_SEED, load_contexts, persona_messages
-from rewriting.pipeline import REFUSAL, clean_statement, score_extraction
+from direct_prompting import DEFAULT_SEED, persona_messages
+from rewriting.pipeline import (ADAPTED_DIR, REFUSAL, behavior_context, clean_statement, score_extraction)
 from rewriting import prompts
 from rewriting.traits import LEVELS, TRAITS
+sys.path.insert(0, str(ADAPTED_DIR))
+from get_batches import batches_ending_with_id, load_jsons
 
 
-def build_conversations(contexts_with_targets, seed, levels, max_turns):
-    """Build one persona-conditioned conversation per (trait, level)."""
-    groups = {}
+def sample_ids(traits, ids_per_trait, ids, seed):
+    """Target ids: an explicit list, or `ids_per_trait` random ids per trait (fixed seed)."""
+    items = load_jsons()
+    by_id = {item["id"]: item for item in items}
 
-    for context, trait_list in contexts_with_targets:
-        for trait in trait_list:
-            groups.setdefault(trait, []).append(context)
+    if ids:
+        missing = [i for i in ids if i not in by_id]
+        if missing:
+            raise ValueError(f"ids not found in the helper's data file: {missing}")
+        return list(ids), by_id
 
+    rng = random.Random(seed)
+    sampled = []
+
+    for trait in traits:
+        pool = [item["id"] for item in items if item["trait_code"] == trait]
+        sampled += rng.sample(pool, min(ids_per_trait, len(pool)))
+
+    return sampled, by_id
+
+
+def build_conversations(target_ids, by_id, seed, levels, max_turns):
+    """Build one persona-conditioned conversation per (target item, level)."""
     convs = []
 
-    for trait, contexts in groups.items():
-        ordered = list(contexts)
-        random.Random(seed).shuffle(ordered)
+    for target_id in target_ids:
+        steps = list(itertools.islice(
+            batches_ending_with_id(target_id, seed=seed), max_turns))
 
-        if max_turns:
-            ordered = ordered[:max_turns]
+        order = steps[-1][:-1]  # history items, in the order they are asked
+
+        for k, step in enumerate(steps):  # each list must extend the previous one
+            if step[:-1] != order[:k]:
+                raise ValueError("batches_ending_with_id lists no longer extend each other")
+
+        trait = by_id[target_id]["trait_code"]
+        hist = [behavior_context(item, seed) for item in order]
+        target = behavior_context(by_id[target_id], seed)
 
         for level in levels:
             convs.append({
                 "condition": "persona",
                 "target_trait": trait,
                 "level": level,
-                "contexts": ordered,
+                "hist": hist,
+                "target": target,
+                "n_steps": len(steps),
                 "history": [],
             })
 
@@ -58,12 +84,30 @@ def build_conversations(contexts_with_targets, seed, levels, max_turns):
     return convs
 
 
-def run(generator, contexts_with_targets, *, seed, levels=LEVELS,
-        temperature=0.0, max_new_tokens=128, batch_size=4,
-        max_turns=None):
+def ask(generator, convs, contexts, batch_size, sampling):
+    """Ask each conversation its own question; returns (user_message, cleaned_text) per conversation."""
+    results = []
 
-    convs = build_conversations(
-        contexts_with_targets, seed, levels, max_turns)
+    for start in range(0, len(convs), batch_size):
+        chunk = convs[start:start + batch_size]
+        ctxs = contexts[start:start + batch_size]
+
+        turns = [persona_messages(ctx, c["target_trait"], c["level"])
+                 for c, ctx in zip(chunk, ctxs)]
+
+        conversations = [[t[0]] + c["history"] + [t[1]] for c, t in zip(chunk, turns)]
+        outputs = generator.generate(conversations, **sampling)
+
+        results += [(t[1], clean_statement(out)) for t, out in zip(turns, outputs)]
+
+    return results
+
+
+def run(generator, target_ids, by_id, *, seed, levels=LEVELS,
+        temperature=0.0, max_new_tokens=128, batch_size=4,
+        max_turns=None, probe_turns=None):
+
+    convs = build_conversations(target_ids, by_id, seed, levels, max_turns)
 
     sampling = {
         "temperature": temperature,
@@ -72,28 +116,23 @@ def run(generator, contexts_with_targets, *, seed, levels=LEVELS,
 
     rows = []
 
-    for turn in range(max(len(c["contexts"]) for c in convs)):
-        active = [c for c in convs if turn < len(c["contexts"])]
+    for k in range(max(c["n_steps"] for c in convs)):
+        active = [c for c in convs if k < c["n_steps"]]
 
-        for start in range(0, len(active), batch_size):
-            batch = active[start:start + batch_size]
+        if k > 0:  # add the next "other" item and the model's full answer to the history
+            history_items = [c["hist"][k - 1] for c in active]
 
-            turns = [
-                persona_messages(
-                    c["contexts"][turn],
-                    c["target_trait"],
-                    c["level"],
-                )
-                for c in batch]
+            for conv, (user_message, text) in zip(
+                    active, ask(generator, active, history_items, batch_size, sampling)):
+                conv["history"] += [user_message, {"role": "assistant", "content": text}]
 
-            conversations = [[t[0]] + c["history"] + [t[1]] for c, t in zip(batch, turns)]
-            outputs = generator.generate(conversations, **sampling)
+        if probe_turns is None or (k + 1) in probe_turns:
+            # probe: the target item asked last; recorded, not added to the history
+            targets = [c["target"] for c in active]
 
-            for conv, t, out in zip(batch, turns, outputs):
-                text = clean_statement(out)
-
-                conv["history"] += [t[1], {"role": "assistant", "content": text},]
-                context = conv["contexts"][turn]
+            for conv, (_, text) in zip(
+                    active, ask(generator, active, targets, batch_size, sampling)):
+                context = conv["target"]
 
                 rows.append(({
                     "condition": conv["condition"],
@@ -105,15 +144,15 @@ def run(generator, contexts_with_targets, *, seed, levels=LEVELS,
                     "seed": seed,
                     "displayed_options": list(context.displayed_options),
                     "conv_id": conv["conv_id"],
-                    "turn": turn,
-                    "n_turns": len(conv["contexts"]),
+                    "turn": k,
+                    "n_turns": conv["n_steps"],
                     "text": text,
                     "refusal": bool(REFUSAL.search(text)),
                 }, context))
 
-        print(f"  turn {turn + 1}: {len(active)} conversations")
+        print(f"  list length {k + 1}: {len(active)} conversations")
 
-    # Blind extraction, independent per turn (no history, no target).
+    # Blind extraction, independent per probe (no history, no target).
     readable = [(r, c) for r, c in rows
         if r["text"] and not r["refusal"]]
 
@@ -139,37 +178,51 @@ def run(generator, contexts_with_targets, *, seed, levels=LEVELS,
             else score_extraction(context, record["extracted"]))
         records.append(record)
 
-    return sorted(records,key=lambda r: (r["conv_id"], r["turn"]))
+    return sorted(records, key=lambda r: (r["conv_id"], r["turn"]))
 
 
 def run_experiment(
     generator,
     out,
     *,
-    source="behaviorbench",
-    split="development",
     confirm_frozen=False,
     traits=tuple(TRAITS),
     levels=LEVELS,
-    limit=None,
+    ids_per_trait=10,
+    ids=None,
     seed=DEFAULT_SEED,
     seeds=1,
     batch_size=4,
     temperature=0.0,
     max_turns=None,
+    probe_turns=None,
 ):
-    """Run persona-only multi-turn experiments and write records to out."""
+    """Run persona-only multi-turn experiments and write records to out.
 
-    if split == "test" and source != "bfi" and not confirm_frozen:
+    The target ids are sampled once with `seed`, so every run uses the same ids; run k then
+    reshuffles the history order (and choice order) with seed + k.
+    `max_turns` is the number of lists per target (list lengths 1..max_turns).
+    `probe_turns` (1-based list lengths, e.g. [5, 10]) skips the target probe at other lengths.
+    """
+
+    if not confirm_frozen:
         raise ValueError(
-            "split='test' requires confirm_frozen=True; "
-            "tune on development only"
+            "this runs on the helper's test.json; "
+            "pass confirm_frozen=True once prompts are final"
         )
 
     unknown = set(traits) - set(TRAITS)
 
     if unknown:
         raise ValueError(f"unknown traits: {sorted(unknown)}")
+
+    if probe_turns:
+        if max_turns is None:
+            max_turns = max(probe_turns)
+        if max(probe_turns) > max_turns:
+            raise ValueError("probe_turns cannot exceed max_turns")
+
+    target_ids, by_id = sample_ids(traits, ids_per_trait, ids, seed)
 
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -181,18 +234,18 @@ def run_experiment(
 
             records = run(
                 generator,
-                load_contexts(
-                    source, split, traits, limit, run_seed
-                ),
+                target_ids,
+                by_id,
                 seed=run_seed,
                 levels=levels,
                 temperature=temperature,
                 batch_size=batch_size,
                 max_turns=max_turns,
+                probe_turns=probe_turns,
             )
 
             for record in records:
-                record.update(source=source, split=split if source != "bfi" else None,)
+                record.update(source="behaviorbench", split="test")
                 handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
             handle.flush()
@@ -208,21 +261,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
-        "--source",
-        choices=["behaviorbench", "bfi"],
-        default="behaviorbench",
-    )
-
-    parser.add_argument(
-        "--split",
-        choices=["development", "test"],
-        default="development",
-    )
-
-    parser.add_argument(
         "--confirm-frozen",
         action="store_true",
-        help="required for --split test: prompts and thresholds are final",
+        help="required: the helper's data file is the test split",
     )
 
     parser.add_argument(
@@ -241,29 +282,43 @@ def main():
     )
 
     parser.add_argument(
-        "--limit",
+        "--ids-per-trait",
         type=int,
-        help="items per trait to load, for pilots",
+        default=10,
+        help="target items sampled per trait (fixed seed)",
+    )
+
+    parser.add_argument(
+        "--ids",
+        nargs="+",
+        help="explicit target item ids (overrides --ids-per-trait)",
     )
 
     parser.add_argument(
         "--max-turns",
         type=int,
-        help="turns per conversation (default: all items of the trait)",
+        help="lists per target, i.e. list lengths 1..max-turns (default: every other item; very expensive)",
+    )
+
+    parser.add_argument(
+        "--probe-turns",
+        nargs="+",
+        type=int,
+        help="only probe the target at these list lengths, e.g. 5 10 (default: every length)",
     )
 
     parser.add_argument(
         "--seed",
         type=int,
         default=DEFAULT_SEED,
-        help="first seed; runs use seed, seed+1, ...",
+        help="seed for sampling ids and for the first run; runs use seed, seed+1, ...",
     )
 
     parser.add_argument(
         "--seeds",
         type=int,
         default=1,
-        help="number of runs; each reshuffles item order and choice order",
+        help="number of runs; each reshuffles the history order and choice order",
     )
 
     parser.add_argument(
@@ -280,8 +335,8 @@ def main():
 
     args = parser.parse_args()
 
-    if args.split == "test" and not args.confirm_frozen:
-        parser.error("--split test requires --confirm-frozen; tune on development only")
+    if not args.confirm_frozen:
+        parser.error("--confirm-frozen is required: the helper's data file is the test split")
 
     from rewriting.llm import MODEL_ID, HFGenerator
 
@@ -293,17 +348,17 @@ def main():
     run_experiment(
         generator,
         args.out,
-        source=args.source,
-        split=args.split,
-        confirm_frozen=args.confirm_frozen,
+        confirm_frozen=True,
         traits=args.traits,
         levels=args.levels,
-        limit=args.limit,
+        ids_per_trait=args.ids_per_trait,
+        ids=args.ids,
         seed=args.seed,
         seeds=args.seeds,
         batch_size=args.batch_size,
         temperature=args.temperature,
         max_turns=args.max_turns,
+        probe_turns=args.probe_turns,
     )
 
 
