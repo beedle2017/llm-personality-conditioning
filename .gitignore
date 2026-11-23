@@ -228,3 +228,5 @@ artifacts/steering/caa/generations/
 
 # Rewriting run outputs
 outputs/
+artifacts/agents/transcripts_*.jsonl
+artifacts/agents_pilot/

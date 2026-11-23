@@ -1,0 +1,86 @@
+[
+  {
+    "id": "collab_project_timeline",
+    "type": "collaborative",
+    "title": "Project Milestone Planning",
+    "prompt": "We are co-leading a critical project that launches in six weeks. We need to agree on our intermediate milestones, deadlines, and how strictly we will enforce deliverables across the team. How should we structure our timeline and track accountability?",
+    "traits": ["C", "A"]
+  },
+  {
+    "id": "collab_team_event",
+    "type": "collaborative",
+    "title": "Company Retreat Planning",
+    "prompt": "We have been tasked with designing the itinerary for an upcoming weekend team retreat. We want to balance structured group social activities, team-building exercises, and unstructured personal downtime. What schedule and types of events should we organize?",
+    "traits": ["E", "A", "O"]
+  },
+  {
+    "id": "collab_shared_budget",
+    "type": "collaborative",
+    "title": "Department Budget Allocation",
+    "prompt": "Our department received an unexpected surplus budget of fifty thousand dollars that must be allocated today. We need to decide collaboratively whether to invest it in new exploratory tools, team skill workshops, or reserves for project contingencies. How should we distribute these funds?",
+    "traits": ["C", "O", "A"]
+  },
+  {
+    "id": "collab_office_setup",
+    "type": "collaborative",
+    "title": "Collaborative Workspace Organization",
+    "prompt": "Our shared office space is being renovated next month, and the two of us get to decide the floor plan. We need to agree on how much space to dedicate to quiet individual focus desks versus lively open brainstorming lounges. What design best serves our daily working needs?",
+    "traits": ["E", "C"]
+  },
+  {
+    "id": "collab_client_presentation",
+    "type": "collaborative",
+    "title": "High-Stakes Client Proposal",
+    "prompt": "We are preparing a joint pitch presentation for a prospective client with high expectations. We need to decide how to split the presentation, what tone to adopt, and how to handle tough questioning from their panel. How should we coordinate our delivery?",
+    "traits": ["E", "C", "A"]
+  },
+  {
+    "id": "collab_volunteer_drive",
+    "type": "collaborative",
+    "title": "Community Outreach Initiative",
+    "prompt": "Our organization is hosting a neighborhood charity drive next Saturday. We need to plan how to engage local residents, coordinate volunteers, and ensure all supplies are gathered and distributed smoothly. What should our operational plan look like?",
+    "traits": ["A", "C", "E"]
+  },
+  {
+    "id": "disagree_product_launch",
+    "type": "disagreement",
+    "title": "Launch Date Decision",
+    "prompt": "A major product release is scheduled for tomorrow, but a non-critical feature still has minor cosmetic bugs. Speaker A favors delaying the launch until every bug is resolved and tested to perfection. Speaker B favors launching on schedule tomorrow and patching minor issues in an update next week. You must discuss this disagreement and work toward a binding decision.",
+    "traits": ["C", "A"]
+  },
+  {
+    "id": "disagree_workplace_policy",
+    "type": "disagreement",
+    "title": "Remote vs In-Office Work Policy",
+    "prompt": "Our division must establish a permanent attendance policy for the team. Speaker A believes mandatory in-office presence four days a week is essential for spontaneous collaboration and team bonding. Speaker B argues that full remote flexibility empowers employees and boosts morale. Please discuss your perspectives and negotiate a fair team policy.",
+    "traits": ["E", "A", "C"]
+  },
+  {
+    "id": "disagree_risk_taking",
+    "type": "disagreement",
+    "title": "Unproven Technology Adoption",
+    "prompt": "We need to select a core architecture for a multi-year software initiative. Speaker A wants to adopt an innovative but unproven open-source framework that could deliver major competitive advantages. Speaker B prefers sticking with a tried-and-tested, industry-standard stack that carries minimal risk. Discuss your differing viewpoints and decide on the path forward.",
+    "traits": ["O", "C"]
+  },
+  {
+    "id": "disagree_client_negotiation",
+    "type": "disagreement",
+    "title": "Difficult Client Concessions",
+    "prompt": "An important client is demanding a significant price discount and unreasonable contract terms while threatening to walk away. Speaker A argues we should accommodate their requests to protect the relationship and maintain goodwill. Speaker B insists we must stand firm, reject unfair demands, and be willing to walk away from an unprofitable contract. Discuss and decide how we will respond.",
+    "traits": ["A", "N"]
+  },
+  {
+    "id": "disagree_hiring_choice",
+    "type": "disagreement",
+    "title": "Final Hiring Decision",
+    "prompt": "We are choosing between two finalists for a leadership role. Candidate 1 is highly structured, disciplined, and adheres strictly to protocols, but lacks flashy interpersonal charisma. Candidate 2 is a vibrant, charismatic visionary who is informal and occasionally disorganized. Debate the merits of each candidate and reach a consensus on whom to hire.",
+    "traits": ["C", "E"]
+  },
+  {
+    "id": "disagree_overtime_emergency",
+    "type": "disagreement",
+    "title": "Weekend Crunch Overtime",
+    "prompt": "A sudden deadline shift requires extensive work over the coming holiday weekend to deliver on time. Speaker A feels we have a duty to ask the entire team to put in overtime to guarantee delivery for our partners. Speaker B believes forcing weekend work harms well-being and that we should negotiate an extension instead. Discuss this conflict and choose how to proceed.",
+    "traits": ["A", "C", "N"]
+  }
+]
