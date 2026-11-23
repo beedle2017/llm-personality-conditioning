@@ -137,11 +137,11 @@ class FakeGenerator:
 class ConditionedAgent:
     """Agent conditioned via prompting, residual-stream steering, or rewriting."""
 
-    agent_id: str
-    method: str  # "prompting" | "steering" | "rewrite"
-    trait_code: str  # "O" | "C" | "E" | "A" | "N"
-    level: int  # 1..5
-    generator: Generator
+    method: str = "prompting"  # "prompting" | "steering" | "rewrite"
+    trait_code: str = "C"  # "O" | "C" | "E" | "A" | "N"
+    level: int = 3  # 1..5
+    generator: Generator | None = None
+    agent_id: str = "agent"
     k: float = 4.0
     layer_idx: int = 15
     steering_vector: torch.Tensor | None = None
@@ -156,6 +156,20 @@ class ConditionedAgent:
             raise ValueError(f"Level must be in 1..5, got {self.level}")
         if not self.history:
             self.reset_history()
+
+    def reply(
+        self,
+        history: list[dict[str, str]] | None = None,
+        task_prompt: str | None = None,
+    ) -> str:
+        """Generate reply to history/task_prompt, matching the ConditionedAgent protocol."""
+        if history is not None:
+            msgs = copy.deepcopy(history)
+        else:
+            msgs = copy.deepcopy(self.history)
+        if task_prompt is not None and len(msgs) <= 1:
+            msgs.append({"role": "user", "content": task_prompt})
+        return self.generate_turn(msgs)
 
     def reset_history(self) -> None:
         """Reset history to just the initial system message."""

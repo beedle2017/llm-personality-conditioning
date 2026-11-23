@@ -91,6 +91,9 @@ def probe_messages(
     return messages
 
 
+make_probe_messages = probe_messages
+
+
 def probe_rewrite_messages(
     context: Any,
     draft: str,

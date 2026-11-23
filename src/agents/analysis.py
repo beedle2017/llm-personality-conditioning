@@ -230,36 +230,53 @@ def analyze_pair_condition(
     behavioral_ci = bootstrap_ci(adjusted_shifts, n_resamples=n_resamples, seed=seed)
 
     # Linguistic shift analysis
-    from .linguistic import compute_shifts_for_dialogue
+    from .linguistic import FEATURE_NAMES, compute_shifts_for_dialogue, extract_turn_features
 
     ling_shifts: list[float] = []
     if interactive_transcripts:
-        # Group transcripts by dialogue_id
+        # 1. Compute feature standard deviations across all turns in the run to standardize
+        all_turn_features: dict[str, list[float]] = {f: [] for f in FEATURE_NAMES}
+        for tr in interactive_transcripts:
+            feats = extract_turn_features(tr.get("text", ""))
+            for f in FEATURE_NAMES:
+                all_turn_features[f].append(feats[f])
+
+        feature_stds = {
+            f: float(np.std(vals)) if len(vals) > 1 and np.std(vals) > 1e-6 else 1.0
+            for f, vals in all_turn_features.items()
+        }
+
+        # 2. Group interactive transcripts by dialogue_id
         d_trans: dict[int, list[dict[str, Any]]] = {}
         for t in interactive_transcripts:
             d_trans.setdefault(t["dialogue_id"], []).append(t)
 
-        all_d_shifts = []
         for d_id, turns in d_trans.items():
             shifts = compute_shifts_for_dialogue(turns)
-            all_d_shifts.append(shifts)
-
-        # Standardize features across dialogues and compute composite
-        feature_vals: dict[str, list[float]] = {}
-        for s in all_d_shifts:
             for spk in ("A", "B"):
-                for f, val in s.get(spk, {}).items():
-                    feature_vals.setdefault(f, []).append(val)
-
-        f_means = {f: float(np.mean(vals)) if vals else 0.0 for f, vals in feature_vals.items()}
-        f_stds = {f: float(np.std(vals)) if len(vals) > 1 and np.std(vals) > 1e-6 else 1.0 for f, vals in feature_vals.items()}
-
-        for s in all_d_shifts:
-            for spk in ("A", "B"):
-                spk_shifts = s.get(spk, {})
+                spk_shifts = shifts.get(spk, {})
                 if spk_shifts:
-                    z_scores = [(spk_shifts[f] - f_means[f]) / f_stds[f] for f in spk_shifts]
-                    ling_shifts.append(float(np.mean(z_scores)))
+                    # Standardized shift per feature: shift / feature_std
+                    std_shifts = [spk_shifts[f] / feature_stds[f] for f in FEATURE_NAMES if f in spk_shifts]
+                    if std_shifts:
+                        ling_shifts.append(float(np.mean(std_shifts)))
+
+        # 3. If solo control transcripts are provided, subtract solo composite baseline
+        if solo_transcripts:
+            solo_shifts_list: list[float] = []
+            s_d_trans: dict[int, list[dict[str, Any]]] = {}
+            for t in solo_transcripts:
+                s_d_trans.setdefault(t["dialogue_id"], []).append(t)
+            for d_id, turns in s_d_trans.items():
+                s_shifts = compute_shifts_for_dialogue(turns)
+                for spk in ("A", "B"):
+                    spk_shifts = s_shifts.get(spk, {})
+                    if spk_shifts:
+                        std_shifts = [spk_shifts[f] / feature_stds[f] for f in FEATURE_NAMES if f in spk_shifts]
+                        if std_shifts:
+                            solo_shifts_list.append(float(np.mean(std_shifts)))
+            mean_solo_ling = float(np.mean(solo_shifts_list)) if solo_shifts_list else 0.0
+            ling_shifts = [s - mean_solo_ling for s in ling_shifts]
 
     linguistic_ci = bootstrap_ci(ling_shifts if ling_shifts else [0.0], n_resamples=n_resamples, seed=seed)
 
