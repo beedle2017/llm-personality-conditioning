@@ -21,65 +21,130 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def plot_drift_curves(probes_df: pd.DataFrame, out_path: Path) -> None:
-    """Plot behavioral endorsement curves across checkpoints with 95% CIs."""
+    """Plot behavioral endorsement curves across checkpoints with 95% CIs.
+
+    Shows only (method, trait) panels that have data, with larger fonts,
+    explicit checkpoint markers, n in panel title, and labeled lines
+    for Agent L1, Agent L5, and Solo controls.
+    """
     if probes_df.empty:
         return
 
-    # Filter to interactive condition and valid scores
-    valid_df = probes_df[(probes_df["condition"] == "interactive") & (probes_df["score"].notna())].copy()
+    valid_df = probes_df[probes_df["score"].notna()].copy()
     valid_df["score"] = pd.to_numeric(valid_df["score"], errors="coerce")
     valid_df = valid_df.dropna(subset=["score"])
 
-    methods = valid_df["method"].unique()
-    traits = valid_df["trait"].unique()
+    # Identify panels (method, trait) that have interactive data
+    interactive_df = valid_df[valid_df["condition"] == "interactive"]
+    active_panels = []
+    seen = set()
+    for _, r in interactive_df.iterrows():
+        key = (r["method"], r["trait"])
+        if key not in seen:
+            seen.add(key)
+            active_panels.append(key)
 
-    fig, axes = plt.subplots(len(methods), len(traits), figsize=(4 * len(traits), 3.5 * len(methods)), squeeze=False)
+    if not active_panels:
+        return
 
-    for i, method in enumerate(methods):
-        for j, trait in enumerate(traits):
-            ax = axes[i, j]
-            sub = valid_df[(valid_df["method"] == method) & (valid_df["trait"] == trait)]
-            if sub.empty:
-                ax.text(0.5, 0.5, "No Data", ha="center", va="center")
-                continue
+    n_panels = len(active_panels)
+    ncols = min(3, n_panels)
+    nrows = (n_panels + ncols - 1) // ncols
 
-            pairs = sub["pair"].unique()
-            for pair in sorted(pairs):
-                pair_sub = sub[sub["pair"] == pair]
-                for agent, color, marker in [("A", "#1f77b4", "o"), ("B", "#d62728", "s")]:
-                    ag_sub = pair_sub[pair_sub["agent"] == agent]
-                    if ag_sub.empty:
-                        continue
-                    lvl = ag_sub["level"].iloc[0]
-                    cps = sorted(ag_sub["checkpoint"].unique())
-                    means = []
-                    lows = []
-                    highs = []
-                    for cp in cps:
-                        vals = ag_sub[ag_sub["checkpoint"] == cp]["score"].values
-                        if len(vals) > 0:
-                            m = np.mean(vals)
-                            # Simple standard error approx for curve plotting
-                            se = np.std(vals) / np.sqrt(len(vals)) if len(vals) > 1 else 0.0
-                            means.append(m)
-                            lows.append(m - 1.96 * se)
-                            highs.append(m + 1.96 * se)
-                        else:
-                            means.append(np.nan)
-                            lows.append(np.nan)
-                            highs.append(np.nan)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(6.0 * ncols, 4.5 * nrows), squeeze=False)
 
-                    label = f"Pair {pair} - Ag {agent} (lvl {lvl})"
-                    ax.plot(cps, means, label=label, marker=marker, linewidth=1.5, alpha=0.85)
-                    ax.fill_between(cps, lows, highs, alpha=0.15)
+    colors_ag = {"1": "#1f77b4", "5": "#d62728", "3": "#9467bd"}
+    markers_ag = {"1": "o", "5": "s", "3": "D"}
+    solo_colors = {"1": "#5c768d", "5": "#b35959", "3": "#75598d"}
 
-            ax.set_title(f"{method.capitalize()} - Trait {trait}", fontsize=11, fontweight="bold")
-            ax.set_xlabel("Dialogue Round (Checkpoint)", fontsize=9)
-            ax.set_ylabel("Endorsement Rate", fontsize=9)
-            ax.set_ylim(-0.05, 1.05)
-            ax.grid(True, linestyle="--", alpha=0.5)
-            if i == 0 and j == 0:
-                ax.legend(fontsize=7, loc="lower left")
+    for idx, (method, trait) in enumerate(active_panels):
+        r_idx = idx // ncols
+        c_idx = idx % ncols
+        ax = axes[r_idx, c_idx]
+
+        sub_inter = valid_df[(valid_df["method"] == method) & (valid_df["trait"] == trait) & (valid_df["condition"] == "interactive")]
+        sub_solo = valid_df[(valid_df["method"] == method) & (valid_df["trait"] == trait) & (valid_df["condition"] == "solo_control")]
+
+        n_diag = sub_inter["dialogue_id"].nunique()
+        n_items = sub_inter["item_id"].nunique()
+        ax.set_title(f"{method.capitalize()} · Trait {trait} (n={n_diag} dialogues, {n_items} items)", fontsize=13, fontweight="bold", pad=10)
+
+        # Plot interactive lines
+        pairs = sorted(sub_inter["pair"].unique())
+        for pair in pairs:
+            pair_sub = sub_inter[sub_inter["pair"] == pair]
+            for agent in ("A", "B"):
+                ag_sub = pair_sub[pair_sub["agent"] == agent]
+                if ag_sub.empty:
+                    continue
+                lvl = int(ag_sub["level"].iloc[0])
+                cps = sorted(ag_sub["checkpoint"].unique())
+                means = []
+                lows = []
+                highs = []
+                for cp in cps:
+                    vals = ag_sub[ag_sub["checkpoint"] == cp]["score"].values
+                    if len(vals) > 0:
+                        m = float(np.mean(vals))
+                        se = float(np.std(vals) / np.sqrt(len(vals))) if len(vals) > 1 else 0.0
+                        means.append(m)
+                        lows.append(m - 1.96 * se)
+                        highs.append(m + 1.96 * se)
+                    else:
+                        means.append(np.nan)
+                        lows.append(np.nan)
+                        highs.append(np.nan)
+
+                label_base = f"Agent L{lvl}"
+                if pair == "3-3":
+                    label_base = f"Agent L3 ({agent})"
+                elif len(pairs) > 1 and pair != "1-5":
+                    label_base = f"Agent L{lvl} ({pair})"
+
+                c = colors_ag.get(str(lvl), "#2ca02c")
+                m = markers_ag.get(str(lvl), "o")
+                ax.plot(cps, means, label=label_base, color=c, marker=m, markersize=8, markeredgewidth=1.5, linewidth=2.0, alpha=0.9)
+                ax.fill_between(cps, lows, highs, color=c, alpha=0.15)
+
+        # Plot solo control lines if present
+        if not sub_solo.empty:
+            solo_lvls = sorted(sub_solo["level"].unique())
+            for s_lvl in solo_lvls:
+                s_sub = sub_solo[sub_solo["level"] == s_lvl]
+                s_cps = sorted(s_sub["checkpoint"].unique())
+                s_means = []
+                for cp in s_cps:
+                    s_vals = s_sub[s_sub["checkpoint"] == cp]["score"].values
+                    s_means.append(float(np.mean(s_vals)) if len(s_vals) > 0 else np.nan)
+
+                s_col = solo_colors.get(str(int(s_lvl)), "#7f7f7f")
+                ax.plot(
+                    s_cps,
+                    s_means,
+                    label=f"Solo control L{int(s_lvl)}",
+                    color=s_col,
+                    linestyle="--",
+                    marker="^",
+                    markersize=7,
+                    linewidth=1.8,
+                    alpha=0.75,
+                )
+
+        ax.set_xlabel("Dialogue Checkpoint", fontsize=11, fontweight="bold")
+        ax.set_ylabel("Endorsement Rate", fontsize=11, fontweight="bold")
+        all_cps = sorted(sub_inter["checkpoint"].unique())
+        ax.set_xticks(all_cps)
+        ax.set_xticklabels([f"k={cp}" for cp in all_cps], fontsize=11)
+        ax.set_ylim(-0.05, 1.05)
+        ax.tick_params(axis="both", labelsize=11)
+        ax.grid(True, linestyle="--", alpha=0.5)
+        ax.legend(fontsize=9, loc="lower left", framealpha=0.9)
+
+    # Hide any unused subplots
+    for empty_idx in range(n_panels, nrows * ncols):
+        er_idx = empty_idx // ncols
+        ec_idx = empty_idx % ncols
+        axes[er_idx, ec_idx].axis("off")
 
     plt.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -93,7 +158,15 @@ def plot_net_shifts_bar(summary_df: pd.DataFrame, out_path: Path) -> None:
         return
 
     df = summary_df.copy()
-    labels = [f"{r['method'][:4]}-{r['trait']}-{r['pair']}" for _, r in df.iterrows()]
+    # Format readable labels such as "Prompting · C · 1 vs 5"
+    labels = []
+    for _, r in df.iterrows():
+        m_name = str(r["method"]).capitalize()
+        t_name = str(r["trait"])
+        la = r.get("level_a", "")
+        lb = r.get("level_b", "")
+        labels.append(f"{m_name} · {t_name} · {la} vs {lb}")
+
     x = np.arange(len(labels))
     width = 0.35
 
@@ -105,7 +178,7 @@ def plot_net_shifts_bar(summary_df: pd.DataFrame, out_path: Path) -> None:
     l_err_low = np.maximum(0, l_shifts - df["linguistic_ci_low"].values)
     l_err_high = np.maximum(0, df["linguistic_ci_high"].values - l_shifts)
 
-    fig, ax = plt.subplots(figsize=(max(8, len(labels) * 0.9), 5))
+    fig, ax = plt.subplots(figsize=(max(9, len(labels) * 1.5), 5.5))
 
     rects1 = ax.bar(
         x - width / 2,
@@ -114,26 +187,31 @@ def plot_net_shifts_bar(summary_df: pd.DataFrame, out_path: Path) -> None:
         yerr=[b_err_low, b_err_high],
         label="Net Behavioral Shift",
         color="#2ca02c",
-        capsize=3,
-        alpha=0.85,
+        capsize=4,
+        alpha=0.88,
+        edgecolor="#1e731e",
+        linewidth=1.0,
     )
     rects2 = ax.bar(
         x + width / 2,
         l_shifts,
         width,
         yerr=[l_err_low, l_err_high],
-        label="Net Linguistic Shift (Composite)",
+        label="Net Linguistic Shift (Style Distance Reduction)",
         color="#1f77b4",
-        capsize=3,
-        alpha=0.85,
+        capsize=4,
+        alpha=0.88,
+        edgecolor="#144d75",
+        linewidth=1.0,
     )
 
-    ax.set_ylabel("Standardized Shift toward Partner", fontsize=10)
-    ax.set_title("Multi-Agent Social Robustness: Behavioral vs Linguistic Accommodation", fontsize=12, fontweight="bold")
+    ax.set_ylabel("Standardized Shift / Distance Reduction", fontsize=12, fontweight="bold")
+    ax.set_title("Multi-Agent Social Robustness: Behavioral vs. Linguistic Accommodation", fontsize=13, fontweight="bold", pad=12)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=9)
-    ax.axhline(0, color="black", linewidth=0.8, linestyle="--")
-    ax.legend(fontsize=9)
+    ax.set_xticklabels(labels, rotation=25, ha="right", fontsize=11, fontweight="bold")
+    ax.tick_params(axis="both", labelsize=11)
+    ax.axhline(0, color="black", linewidth=1.0, linestyle="--")
+    ax.legend(fontsize=10, loc="upper right", framealpha=0.9)
     ax.grid(True, linestyle=":", alpha=0.6, axis="y")
 
     plt.tight_layout()

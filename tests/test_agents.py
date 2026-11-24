@@ -369,6 +369,41 @@ class TestAnalysisMetricsAndClassification(unittest.TestCase):
         analysis = analyze_pair_condition(interactive_probes=probes, interactive_transcripts=transcripts, n_resamples=200, seed=42)
         self.assertAlmostEqual(analysis["linguistic_shift_mean"], 0.0, places=2)
 
+    def test_same_level_pair_reports_real_drift(self):
+        """Regression test: Same-level pairs must report real absolute drift instead of 0 by construction."""
+        # Both agents start at 0.8 at checkpoint 0, and drift to 0.5 at checkpoint 6
+        probes = [
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "A", "level": 3, "checkpoint": 0, "dialogue_id": 0, "item_id": "i1", "score": 0.8, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "B", "level": 3, "checkpoint": 0, "dialogue_id": 0, "item_id": "i1", "score": 0.8, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "A", "level": 3, "checkpoint": 6, "dialogue_id": 0, "item_id": "i1", "score": 0.5, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "B", "level": 3, "checkpoint": 6, "dialogue_id": 0, "item_id": "i1", "score": 0.5, "invalid": False, "condition": "interactive"},
+        ]
+        analysis = analyze_pair_condition(interactive_probes=probes, n_resamples=200, seed=42)
+        # Real absolute drift should be |0.5 - 0.8| = 0.3, NOT 0.0 by construction
+        self.assertGreater(analysis["behavioral_shift_mean"], 0.25)
+        self.assertAlmostEqual(analysis["behavioral_shift_mean"], 0.30, places=2)
+
+    def test_direction_free_style_distance_accommodates_and_resamples(self):
+        """Verify style distance measures accommodation and resamples items at k=0."""
+        from src.agents.linguistic import compute_style_distances_for_dialogue
+        turns_a = [
+            {"text": "Short turn 1."},
+            {"text": "Short turn 2."},
+            {"text": "A significantly longer and more detailed turn 3 with lots of descriptive words."},
+            {"text": "Another very long and elaborate concluding response turn 4 with details."},
+        ]
+        turns_b = [
+            {"text": "A very elaborate and descriptive opening response turn 1 with plenty of vocabulary."},
+            {"text": "Another detailed and lengthy opening turn 2 with rich descriptive words."},
+            {"text": "A similarly long and detailed late turn 3 with rich descriptive vocabulary."},
+            {"text": "A concluding long and detailed late turn 4 matching the verbose style."},
+        ]
+        # In early turns, A is short (~3 words), B is long (~13 words). Gap is ~10 words.
+        # In late turns, A is long (~13 words), B is long (~13 words). Gap is ~0 words.
+        # Style distance decreased (gap reduced by ~10 words).
+        res = compute_style_distances_for_dialogue(turns_a, turns_b, feature_stds={"word_count": 1.0})
+        self.assertGreater(res["word_count"], 5.0)
+
     def test_equal_level_pair_manipulation_check_na(self):
         """Regression test: Equal-level pairs must have manipulation check labeled N/A."""
         from agents.analysis import generate_summary_tables

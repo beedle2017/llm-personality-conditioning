@@ -200,85 +200,220 @@ def analyze_pair_condition(
         net_shifts_b[cp] = s_b - s_solo_b
         convergence_gaps[cp] = abs(r_a_k - r_b_k)
 
-    # Bootstrap CIs for net social shift at final checkpoint
-    # Compute per-dialogue social shifts
+    # Fixed Bootstrap CIs for net social shift at final checkpoint:
+    # "cached checkpoint-0 probes are identical across dialogues, so resample items for k=0 and dialogues×items only for k=6."
+    # "For same-level pairs, report real absolute drift per agent instead of 0 by construction."
+    unique_items = sorted(list({r.get("item_id", "item_0") for r in interactive_probes if not r.get("invalid") and r.get("score") is not None}))
     dialogue_ids = sorted(list({r["dialogue_id"] for r in interactive_probes}))
-    pair_net_shifts: list[float] = []
 
-    for d_id in dialogue_ids:
-        d_probes_0 = [r for r in interactive_probes if r["dialogue_id"] == d_id and r["checkpoint"] == 0]
-        d_probes_k = [r for r in interactive_probes if r["dialogue_id"] == d_id and r["checkpoint"] == final_cp]
+    # Map k=0 scores by agent and item
+    s0_map_a: dict[str, float] = {}
+    s0_map_b: dict[str, float] = {}
+    for r in interactive_probes:
+        if r.get("checkpoint") == 0 and not r.get("invalid") and r.get("score") is not None:
+            it = r.get("item_id", "item_0")
+            if r["agent"] == "A":
+                s0_map_a[it] = float(r["score"])
+            elif r["agent"] == "B":
+                s0_map_b[it] = float(r["score"])
 
-        # Agent A
-        a0 = [float(r["score"]) for r in d_probes_0 if r["agent"] == "A" and r["score"] is not None]
-        ak = [float(r["score"]) for r in d_probes_k if r["agent"] == "A" and r["score"] is not None]
-        if a0 and ak:
-            shift_a_val = d_a * (np.mean(ak) - np.mean(a0))
-            pair_net_shifts.append(float(shift_a_val))
+    # Map k=final_cp scores by (dialogue_id, item_id)
+    sk_map_a: dict[tuple[int, str], float] = {}
+    sk_map_b: dict[tuple[int, str], float] = {}
+    for r in interactive_probes:
+        if r.get("checkpoint") == final_cp and not r.get("invalid") and r.get("score") is not None:
+            it = r.get("item_id", "item_0")
+            if r["agent"] == "A":
+                sk_map_a[(r["dialogue_id"], it)] = float(r["score"])
+            elif r["agent"] == "B":
+                sk_map_b[(r["dialogue_id"], it)] = float(r["score"])
 
-        # Agent B
-        b0 = [float(r["score"]) for r in d_probes_0 if r["agent"] == "B" and r["score"] is not None]
-        bk = [float(r["score"]) for r in d_probes_k if r["agent"] == "B" and r["score"] is not None]
-        if b0 and bk:
-            shift_b_val = d_b * (np.mean(bk) - np.mean(b0))
-            pair_net_shifts.append(float(shift_b_val))
+    # Solo controls mappings
+    solo_s0_a: dict[str, float] = {}
+    solo_s0_b: dict[str, float] = {}
+    solo_sk_a: dict[tuple[int, str], float] = {}
+    solo_sk_b: dict[tuple[int, str], float] = {}
+    if solo_probes:
+        for r in solo_probes:
+            if not r.get("invalid") and r.get("score") is not None:
+                lvl = r.get("level")
+                cp = r.get("checkpoint")
+                it = r.get("item_id", "item_0")
+                d_id = r.get("dialogue_id", 0)
+                sc = float(r["score"])
+                if lvl == level_a:
+                    if cp == 0:
+                        solo_s0_a[it] = sc
+                    elif cp == final_cp:
+                        solo_sk_a[(d_id, it)] = sc
+                if lvl == level_b:
+                    if cp == 0:
+                        solo_s0_b[it] = sc
+                    elif cp == final_cp:
+                        solo_sk_b[(d_id, it)] = sc
 
-    # Subtract mean solo drift if available
-    mean_solo_shift = (shifts_a.get(final_cp, 0.0) - net_shifts_a.get(final_cp, 0.0) +
-                       shifts_b.get(final_cp, 0.0) - net_shifts_b.get(final_cp, 0.0)) / 2.0
-    adjusted_shifts = [s - mean_solo_shift for s in pair_net_shifts] if pair_net_shifts else [0.0]
-    behavioral_ci = bootstrap_ci(adjusted_shifts, n_resamples=n_resamples, seed=seed)
+    rng = np.random.default_rng(seed)
+    bootstrap_net_shifts: list[float] = []
 
-    # Linguistic shift analysis
-    from .linguistic import FEATURE_NAMES, compute_shifts_for_dialogue, extract_turn_features
+    if unique_items:
+        for _ in range(n_resamples):
+            # Resample items for k=0
+            res_items = rng.choice(unique_items, size=len(unique_items), replace=True)
+            # Resample dialogues for k=final_cp
+            res_diags = rng.choice(dialogue_ids, size=len(dialogue_ids), replace=True)
 
-    ling_shifts: list[float] = []
+            # k=0 means (resampled items only)
+            s0_vals_a = [s0_map_a[it] for it in res_items if it in s0_map_a]
+            s0_vals_b = [s0_map_b[it] for it in res_items if it in s0_map_b]
+            m0_a = np.mean(s0_vals_a) if s0_vals_a else (r_a_0 if not math.isnan(r_a_0) else 0.0)
+            m0_b = np.mean(s0_vals_b) if s0_vals_b else (r_b_0 if not math.isnan(r_b_0) else 0.0)
+
+            # k=final_cp means (dialogues x items)
+            sk_vals_a = [sk_map_a[(d, it)] for d in res_diags for it in res_items if (d, it) in sk_map_a]
+            sk_vals_b = [sk_map_b[(d, it)] for d in res_diags for it in res_items if (d, it) in sk_map_b]
+            mk_a = np.mean(sk_vals_a) if sk_vals_a else m0_a
+            mk_b = np.mean(sk_vals_b) if sk_vals_b else m0_b
+
+            # Solo controls
+            solo_s0_vals_a = [solo_s0_a.get(it, m0_a) for it in res_items]
+            solo_s0_vals_b = [solo_s0_b.get(it, m0_b) for it in res_items]
+            solo_m0_a = np.mean(solo_s0_vals_a) if solo_s0_vals_a else m0_a
+            solo_m0_b = np.mean(solo_s0_vals_b) if solo_s0_vals_b else m0_b
+
+            solo_sk_vals_a = [solo_sk_a.get((d, it), solo_m0_a) for d in res_diags for it in res_items if solo_sk_a]
+            solo_sk_vals_b = [solo_sk_b.get((d, it), solo_m0_b) for d in res_diags for it in res_items if solo_sk_b]
+            solo_mk_a = np.mean(solo_sk_vals_a) if solo_sk_vals_a else solo_m0_a
+            solo_mk_b = np.mean(solo_sk_vals_b) if solo_sk_vals_b else solo_m0_b
+
+            if level_a != level_b:
+                shift_a = d_a * (mk_a - m0_a)
+                shift_b = d_b * (mk_b - m0_b)
+                shift_solo_a = d_a * (solo_mk_a - solo_m0_a)
+                shift_solo_b = d_b * (solo_mk_b - solo_m0_b)
+                net_a = shift_a - shift_solo_a
+                net_b = shift_b - shift_solo_b
+                net_val = 0.5 * (net_a + net_b)
+            else:
+                # Same-level pairs: report real absolute drift per agent instead of 0 by construction
+                drift_a = abs(mk_a - m0_a)
+                drift_b = abs(mk_b - m0_b)
+                drift_solo_a = abs(solo_mk_a - solo_m0_a)
+                drift_solo_b = abs(solo_mk_b - solo_m0_b)
+                net_a = drift_a - drift_solo_a
+                net_b = drift_b - drift_solo_b
+                net_val = 0.5 * (net_a + net_b)
+
+            bootstrap_net_shifts.append(float(net_val))
+
+    if bootstrap_net_shifts:
+        behavioral_ci = BootstrapResult(
+            mean=float(np.mean(bootstrap_net_shifts)),
+            ci_low=float(np.percentile(bootstrap_net_shifts, 2.5)),
+            ci_high=float(np.percentile(bootstrap_net_shifts, 97.5)),
+        )
+    else:
+        behavioral_ci = BootstrapResult(0.0, 0.0, 0.0)
+
+    # Direction-free linguistic style distance analysis compared against solo controls
+    from .linguistic import (
+        FEATURE_NAMES,
+        compute_style_distances_for_dialogue,
+        extract_turn_features,
+    )
+
+    feature_breakdown: dict[str, dict[str, float]] = {}
+    d_net_composites: list[float] = []
+
     if interactive_transcripts:
-        # 1. Compute feature standard deviations across all turns in the run to standardize
-        all_turn_features: dict[str, list[float]] = {f: [] for f in FEATURE_NAMES}
-        for tr in interactive_transcripts:
+        # 1. Compute feature standard deviations across all turns in the run
+        all_trans = interactive_transcripts + (solo_transcripts or [])
+        all_turn_features: dict[str, list[float]] = {f: [] for f in FEATURE_NAMES if f != "bow_cosine"}
+        for tr in all_trans:
             feats = extract_turn_features(tr.get("text", ""))
-            for f in FEATURE_NAMES:
+            for f in all_turn_features:
                 all_turn_features[f].append(feats[f])
 
         feature_stds = {
             f: float(np.std(vals)) if len(vals) > 1 and np.std(vals) > 1e-6 else 1.0
             for f, vals in all_turn_features.items()
         }
+        # BoW cosine standard deviation across typical turns
+        feature_stds["bow_cosine"] = 0.20
 
         # 2. Group interactive transcripts by dialogue_id
-        d_trans: dict[int, list[dict[str, Any]]] = {}
+        d_inter: dict[int, list[dict[str, Any]]] = {}
         for t in interactive_transcripts:
-            d_trans.setdefault(t["dialogue_id"], []).append(t)
+            d_inter.setdefault(t["dialogue_id"], []).append(t)
 
-        for d_id, turns in d_trans.items():
-            shifts = compute_shifts_for_dialogue(turns)
-            for spk in ("A", "B"):
-                spk_shifts = shifts.get(spk, {})
-                if spk_shifts:
-                    # Standardized shift per feature: shift / feature_std
-                    std_shifts = [spk_shifts[f] / feature_stds[f] for f in FEATURE_NAMES if f in spk_shifts]
-                    if std_shifts:
-                        ling_shifts.append(float(np.mean(std_shifts)))
+        inter_dist_by_d: dict[int, dict[str, float]] = {}
+        for d_id, turns in d_inter.items():
+            ta = [t for t in turns if t["speaker"] == "A"]
+            tb = [t for t in turns if t["speaker"] == "B"]
+            inter_dist_by_d[d_id] = compute_style_distances_for_dialogue(ta, tb, feature_stds)
 
-        # 3. If solo control transcripts are provided, subtract solo composite baseline
+        # 3. Solo control baseline style distance changes
+        solo_feat_baseline: dict[str, float] = {f: 0.0 for f in FEATURE_NAMES}
         if solo_transcripts:
-            solo_shifts_list: list[float] = []
-            s_d_trans: dict[int, list[dict[str, Any]]] = {}
+            s_map: dict[tuple[int, int], list[dict[str, Any]]] = {}
             for t in solo_transcripts:
-                s_d_trans.setdefault(t["dialogue_id"], []).append(t)
-            for d_id, turns in s_d_trans.items():
-                s_shifts = compute_shifts_for_dialogue(turns)
-                for spk in ("A", "B"):
-                    spk_shifts = s_shifts.get(spk, {})
-                    if spk_shifts:
-                        std_shifts = [spk_shifts[f] / feature_stds[f] for f in FEATURE_NAMES if f in spk_shifts]
-                        if std_shifts:
-                            solo_shifts_list.append(float(np.mean(std_shifts)))
-            mean_solo_ling = float(np.mean(solo_shifts_list)) if solo_shifts_list else 0.0
-            ling_shifts = [s - mean_solo_ling for s in ling_shifts]
+                s_map.setdefault((t["level"], t["dialogue_id"]), []).append(t)
 
-    linguistic_ci = bootstrap_ci(ling_shifts if ling_shifts else [0.0], n_resamples=n_resamples, seed=seed)
+            if level_a != level_b:
+                for f in FEATURE_NAMES:
+                    vals = []
+                    for d in range(max(1, len(d_inter))):
+                        ta = s_map.get((level_a, d), [])
+                        tb = s_map.get((level_b, d), [])
+                        if ta and tb:
+                            dists = compute_style_distances_for_dialogue(ta, tb, feature_stds)
+                            vals.append(dists[f])
+                    solo_feat_baseline[f] = float(np.mean(vals)) if vals else 0.0
+            else:
+                # Same-level solo: uncoupled pairwise distance changes across distinct dialogues of that level
+                s_diags = sorted(list({t["dialogue_id"] for t in solo_transcripts if t.get("level") == level_a}))
+                for f in FEATURE_NAMES:
+                    vals = []
+                    for i_idx, i_d in enumerate(s_diags):
+                        for j_d in s_diags[i_idx + 1:]:
+                            ta = s_map.get((level_a, i_d), [])
+                            tb = s_map.get((level_b, j_d), [])
+                            if ta and tb:
+                                dists = compute_style_distances_for_dialogue(ta, tb, feature_stds)
+                                vals.append(dists[f])
+                    solo_feat_baseline[f] = float(np.mean(vals)) if vals else 0.0
+
+        # 4. Net style distance reduction per dialogue and per feature
+        feat_nets_by_d: dict[str, list[float]] = {f: [] for f in FEATURE_NAMES}
+        for d_id in sorted(inter_dist_by_d.keys()):
+            cur_dists = inter_dist_by_d[d_id]
+            d_net_vals = [cur_dists[f] - solo_feat_baseline.get(f, 0.0) for f in FEATURE_NAMES]
+            for f in FEATURE_NAMES:
+                feat_nets_by_d[f].append(cur_dists[f] - solo_feat_baseline.get(f, 0.0))
+            d_net_composites.append(float(np.mean(d_net_vals)))
+
+        # Per-feature breakdown with bootstrap
+        for f in FEATURE_NAMES:
+            f_vals = feat_nets_by_d[f]
+            if f_vals:
+                f_boot = [np.mean(rng.choice(f_vals, size=len(f_vals), replace=True)) for _ in range(n_resamples)]
+                feature_breakdown[f] = {
+                    "net_mean": float(np.mean(f_vals)),
+                    "ci_low": float(np.percentile(f_boot, 2.5)),
+                    "ci_high": float(np.percentile(f_boot, 97.5)),
+                }
+            else:
+                feature_breakdown[f] = {"net_mean": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+
+    # Bootstrap composite linguistic shift CI across dialogues
+    if d_net_composites:
+        ling_boot = [np.mean(rng.choice(d_net_composites, size=len(d_net_composites), replace=True)) for _ in range(n_resamples)]
+        linguistic_ci = BootstrapResult(
+            mean=float(np.mean(d_net_composites)),
+            ci_low=float(np.percentile(ling_boot, 2.5)),
+            ci_high=float(np.percentile(ling_boot, 97.5)),
+        )
+    else:
+        linguistic_ci = BootstrapResult(0.0, 0.0, 0.0)
 
     # 2x2 Classification
     has_behavioral_drift = behavioral_ci.ci_low > 0
@@ -321,6 +456,7 @@ def analyze_pair_condition(
         "linguistic_shift_mean": linguistic_ci.mean,
         "linguistic_ci_low": linguistic_ci.ci_low,
         "linguistic_ci_high": linguistic_ci.ci_high,
+        "feature_breakdown": feature_breakdown,
         "classification": classification,
         "invalid_rate": overall_invalid_rate,
     }
@@ -334,6 +470,8 @@ def generate_summary_tables(
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = out_dir / "summary.csv"
     md_path = out_dir / "summary.md"
+
+    from .linguistic import FEATURE_NAMES
 
     fields = [
         "method",
@@ -353,7 +491,7 @@ def generate_summary_tables(
         "linguistic_ci_high",
         "classification",
         "invalid_rate",
-    ]
+    ] + [f"ling_{f}" for f in FEATURE_NAMES]
 
     rows = []
     for a in analyses:
@@ -365,7 +503,7 @@ def generate_summary_tables(
             manip_flag = "PASS"
 
         head_flag = "WARN (ceiling-limited)" if a["is_ceiling_limited"] else "PASS"
-        rows.append({
+        row_dict = {
             "method": a["method"],
             "trait": a["trait"],
             "pair": a["pair"],
@@ -383,7 +521,12 @@ def generate_summary_tables(
             "linguistic_ci_high": round(a["linguistic_ci_high"], 4),
             "classification": a["classification"],
             "invalid_rate": round(a["invalid_rate"], 4),
-        })
+        }
+        fb = a.get("feature_breakdown", {})
+        for f in FEATURE_NAMES:
+            row_dict[f"ling_{f}"] = round(fb.get(f, {}).get("net_mean", 0.0), 4)
+
+        rows.append(row_dict)
 
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -406,6 +549,23 @@ def generate_summary_tables(
             f"| {r['method']} | {r['trait']} | {r['pair']} | {r['r_a_0']} | {r['r_b_0']} | "
             f"{r['manipulation_check']} | {r['headroom_check']} | {b_ci} | {l_ci} | "
             f"**{r['classification']}** | {r['invalid_rate']:.1%} |"
+        )
+
+    # Add Per-Feature Breakdown Table
+    md_lines.extend([
+        "",
+        "## Per-Feature Linguistic Accommodation Breakdown (Style Distance Reduction)",
+        "",
+        "| Method | Trait | Pair | Word Count | Hedges/100 | Contractions | Word Length | 1p Pronouns | Sentiment | BoW Cosine | Net Composite |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
+    ])
+    for r in rows:
+        md_lines.append(
+            f"| {r['method']} | {r['trait']} | {r['pair']} | "
+            f"{r.get('ling_word_count', 0.0):+.3f} | {r.get('ling_hedges_per_100', 0.0):+.3f} | "
+            f"{r.get('ling_contraction_rate', 0.0):+.3f} | {r.get('ling_mean_word_length', 0.0):+.3f} | "
+            f"{r.get('ling_pronoun_1p_rate', 0.0):+.3f} | {r.get('ling_sentiment', 0.0):+.3f} | "
+            f"{r.get('ling_bow_cosine', 0.0):+.3f} | {r['linguistic_shift']:+.3f} |"
         )
 
     md_lines.extend([

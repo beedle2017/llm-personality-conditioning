@@ -177,6 +177,57 @@ def extract_turn_features(text: str, partner_prev_text: str = "") -> dict[str, f
     }
 
 
+def compute_style_distances_for_dialogue(
+    turns_a: list[dict[str, Any]],
+    turns_b: list[dict[str, Any]],
+    feature_stds: dict[str, float] | None = None,
+) -> dict[str, float]:
+    """Compute direction-free style distance change between two partners in a dialogue.
+
+    For each feature:
+        early_dist = |f_A,early - f_B,early| / sigma_f
+        late_dist = |f_A,late - f_B,late| / sigma_f
+        distance_reduction = early_dist - late_dist
+
+    Positive values denote accommodation / convergence (late distance < early distance).
+    Near-zero values denote no change in style distance.
+    Negative values denote style divergence.
+    """
+    if feature_stds is None:
+        feature_stds = {}
+
+    feats_ae = [extract_turn_features(t.get("text", "")) for t in turns_a[:2]]
+    feats_al = [extract_turn_features(t.get("text", "")) for t in turns_a[-2:]]
+    feats_be = [extract_turn_features(t.get("text", "")) for t in turns_b[:2]]
+    feats_bl = [extract_turn_features(t.get("text", "")) for t in turns_b[-2:]]
+
+    results: dict[str, float] = {}
+    for feat in FEATURE_NAMES:
+        std_f = feature_stds.get(feat, 1.0)
+        if std_f < 1e-6:
+            std_f = 1.0
+
+        if feat == "bow_cosine":
+            w_ae = [w for t in turns_a[:2] for w in extract_words(t.get("text", "")) if w not in STOPWORDS]
+            w_al = [w for t in turns_a[-2:] for w in extract_words(t.get("text", "")) if w not in STOPWORDS]
+            w_be = [w for t in turns_b[:2] for w in extract_words(t.get("text", "")) if w not in STOPWORDS]
+            w_bl = [w for t in turns_b[-2:] for w in extract_words(t.get("text", "")) if w not in STOPWORDS]
+            sim_e = cosine_similarity(Counter(w_ae), Counter(w_be))
+            sim_l = cosine_similarity(Counter(w_al), Counter(w_bl))
+            # Distance reduction: dist_early - dist_late = (1 - sim_e) - (1 - sim_l) = sim_l - sim_e
+            results[feat] = (sim_l - sim_e) / std_f
+        else:
+            ae = sum(x[feat] for x in feats_ae) / max(1, len(feats_ae)) if feats_ae else 0.0
+            al = sum(x[feat] for x in feats_al) / max(1, len(feats_al)) if feats_al else 0.0
+            be = sum(x[feat] for x in feats_be) / max(1, len(feats_be)) if feats_be else 0.0
+            bl = sum(x[feat] for x in feats_bl) / max(1, len(feats_bl)) if feats_bl else 0.0
+            de = abs(ae - be) / std_f
+            dl = abs(al - bl) / std_f
+            results[feat] = de - dl
+
+    return results
+
+
 def compute_shifts_for_dialogue(
     transcripts: list[dict[str, Any]],
 ) -> dict[str, dict[str, float]]:
