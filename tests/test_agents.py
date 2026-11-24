@@ -188,6 +188,34 @@ class TestDialogueRunner(unittest.TestCase):
             [p["score"] for p in res2["probes"]],
         )
 
+    def test_checkpoint_zero_and_extraction_caching(self):
+        """Probes at checkpoint 0 and extraction are cached across calls."""
+        cp0_cache = {}
+        ext_cache = {}
+        greedy_cache = {}
+        gen = FakeGenerator()
+
+        # Run 1: populates cache
+        res1 = run_dialogues(
+            "prompting", "C", 1, 5, self.tasks, gen, self.probe_items,
+            rounds=2, checkpoints=(0, 2), seed=42,
+            cp0_probe_cache=cp0_cache, extraction_cache=ext_cache, greedy_cache=greedy_cache,
+        )
+        self.assertIn(("prompting", "C", 1, self.probe_items[0].item_id), cp0_cache)
+        self.assertIn(("prompting", "C", 5, self.probe_items[0].item_id), cp0_cache)
+        calls_after_run1 = len(gen.calls)
+
+        # Run 2 with same cache: should reuse cp0 cache
+        res2 = run_dialogues(
+            "prompting", "C", 1, 5, self.tasks, gen, self.probe_items,
+            rounds=2, checkpoints=(0, 2), seed=42,
+            cp0_probe_cache=cp0_cache, extraction_cache=ext_cache, greedy_cache=greedy_cache,
+        )
+        # Checkpoint 0 probes match exactly
+        p1_cp0 = [p["score"] for p in res1["probes"] if p["checkpoint"] == 0]
+        p2_cp0 = [p["score"] for p in res2["probes"] if p["checkpoint"] == 0]
+        self.assertEqual(p1_cp0, p2_cp0)
+
 
 class TestLinguisticFeatures(unittest.TestCase):
     """Test style feature extraction on short fixed strings with known values."""
@@ -322,6 +350,38 @@ class TestAnalysisMetricsAndClassification(unittest.TestCase):
         ]
         res_ceil = analyze_pair_condition(probes_ceil_a)
         self.assertTrue(res_ceil["is_ceiling_limited"])
+
+    def test_same_level_pair_linguistic_shift_near_zero(self):
+        """Regression test: Same-level pair (3-3) must have linguistic shift near zero."""
+        probes = [
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "A", "level": 3, "checkpoint": 0, "dialogue_id": 0, "score": 0.5, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "B", "level": 3, "checkpoint": 0, "dialogue_id": 0, "score": 0.5, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "A", "level": 3, "checkpoint": 2, "dialogue_id": 0, "score": 0.5, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "B", "level": 3, "checkpoint": 2, "dialogue_id": 0, "score": 0.5, "invalid": False, "condition": "interactive"},
+        ]
+        # Equal level transcripts: both agents speak consistently
+        transcripts = [
+            {"dialogue_id": 0, "round": 1, "half_turn": 1, "speaker": "A", "level": 3, "method": "prompting", "pair": "3-3", "condition": "interactive", "text": "Let us consider a balanced approach to the schedule."},
+            {"dialogue_id": 0, "round": 1, "half_turn": 2, "speaker": "B", "level": 3, "method": "prompting", "pair": "3-3", "condition": "interactive", "text": "I agree that a balanced schedule works well for everyone."},
+            {"dialogue_id": 0, "round": 2, "half_turn": 1, "speaker": "A", "level": 3, "method": "prompting", "pair": "3-3", "condition": "interactive", "text": "We can proceed with this balanced plan then."},
+            {"dialogue_id": 0, "round": 2, "half_turn": 2, "speaker": "B", "level": 3, "method": "prompting", "pair": "3-3", "condition": "interactive", "text": "Sounds good, let us finalize this plan together."},
+        ]
+        analysis = analyze_pair_condition(interactive_probes=probes, interactive_transcripts=transcripts, n_resamples=200, seed=42)
+        self.assertAlmostEqual(analysis["linguistic_shift_mean"], 0.0, places=2)
+
+    def test_equal_level_pair_manipulation_check_na(self):
+        """Regression test: Equal-level pairs must have manipulation check labeled N/A."""
+        from agents.analysis import generate_summary_tables
+        probes = [
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "A", "level": 3, "checkpoint": 0, "dialogue_id": 0, "score": 0.8, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "3-3", "agent": "B", "level": 3, "checkpoint": 0, "dialogue_id": 0, "score": 0.8, "invalid": False, "condition": "interactive"},
+        ]
+        analysis = analyze_pair_condition(interactive_probes=probes, n_resamples=100, seed=42)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            csv_p, md_p = generate_summary_tables([analysis], Path(tmp_dir))
+            md_text = md_p.read_text(encoding="utf-8")
+            self.assertIn("| N/A |", md_text)
+            self.assertIn("Manipulation Check: `N/A`", md_text)
 
 
 class TestEndToEndSmoke(unittest.TestCase):

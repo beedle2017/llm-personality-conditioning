@@ -217,6 +217,8 @@ def main() -> None:
     # Initialize generator based on backend
     generator: Any = None
     hf_model: Any = None
+    t_load_start = time.time()
+    model_load_time = 0.0
 
     if args.backend == "fake":
         generator = FakeGenerator()
@@ -226,6 +228,8 @@ def main() -> None:
         gen_wrapper = HFGenerator.load(load_4bit=args.load_4bit)
         generator = gen_wrapper
         hf_model = gen_wrapper.model
+        model_load_time = time.time() - t_load_start
+        logger.info(f"Model loaded in {model_load_time:.1f}s")
 
     # Steering vectors lookup
     steering_vectors: dict[str, torch.Tensor] = {}
@@ -244,10 +248,24 @@ def main() -> None:
     start_time = time.time()
     per_config_times: list[float] = []
 
+    # Shared caches across configs
+    cp0_probe_cache: dict[tuple[str, str, int, str], dict[str, Any]] = {}
+    extraction_cache: dict[tuple[str, str], str] = {}
+    greedy_cache: dict[str, str] = {}
+
+    # Cumulative per-phase timing stats
+    cumulative_timing = {
+        "model_load": model_load_time,
+        "dialogue_time": 0.0,
+        "probe_time": 0.0,
+        "extraction_time": 0.0,
+    }
+
     # Collect outputs in memory for summary generation
     all_probes: list[dict[str, Any]] = []
     all_transcripts: list[dict[str, Any]] = []
     solo_probes_by_trait_level: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
+    solo_transcripts_by_trait_level: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
 
     current_loaded_method: str | None = None
 
@@ -299,12 +317,23 @@ def main() -> None:
             model=hf_model,
             solo_control=False,
             positive_control=args.positive_control,
+            cp0_probe_cache=cp0_probe_cache,
+            extraction_cache=extraction_cache,
+            greedy_cache=greedy_cache,
         )
 
         append_probes_csv(out_dir, result["probes"])
         append_transcripts_jsonl(out_dir, method, trait, result["transcripts"])
         all_probes.extend(result["probes"])
         all_transcripts.extend(result["transcripts"])
+
+        cfg_timing = result.get("timing", {})
+        cfg_diag = cfg_timing.get("dialogue_time", 0.0)
+        cfg_probe = cfg_timing.get("probe_time", 0.0)
+        cfg_ext = cfg_timing.get("extraction_time", 0.0)
+        cumulative_timing["dialogue_time"] += cfg_diag
+        cumulative_timing["probe_time"] += cfg_probe
+        cumulative_timing["extraction_time"] += cfg_ext
 
         # 2. Run solo control if not already run for these levels
         for lvl in (lvl_a, lvl_b):
@@ -327,14 +356,37 @@ def main() -> None:
                     steering_vector=s_vec,
                     model=hf_model,
                     solo_control=True,
+                    cp0_probe_cache=cp0_probe_cache,
+                    extraction_cache=extraction_cache,
+                    greedy_cache=greedy_cache,
                 )
                 append_probes_csv(out_dir, solo_res["probes"])
                 append_transcripts_jsonl(out_dir, method, trait, solo_res["transcripts"])
                 solo_probes_by_trait_level[solo_key] = solo_res["probes"]
+                solo_transcripts_by_trait_level[solo_key] = solo_res["transcripts"]
+
+                s_time = solo_res.get("timing", {})
+                cumulative_timing["dialogue_time"] += s_time.get("dialogue_time", 0.0)
+                cumulative_timing["probe_time"] += s_time.get("probe_time", 0.0)
+                cumulative_timing["extraction_time"] += s_time.get("extraction_time", 0.0)
 
         elapsed = time.time() - t0
         per_config_times.append(elapsed)
         completed_count += 1
+
+        logger.info(
+            f"[TIMING] Config {method}-{trait}-{pair_str} (in {elapsed:.1f}s): "
+            f"Dialogue={cfg_diag:.1f}s ({(cfg_diag/max(0.1, elapsed))*100:.1f}%), "
+            f"Probes={cfg_probe:.1f}s ({(cfg_probe/max(0.1, elapsed))*100:.1f}%), "
+            f"Extraction={cfg_ext:.1f}s ({(cfg_ext/max(0.1, elapsed))*100:.1f}%)"
+        )
+        logger.info(
+            f"[TIMING] Cumulative Phase Totals: "
+            f"ModelLoad={cumulative_timing['model_load']:.1f}s, "
+            f"Dialogue={cumulative_timing['dialogue_time']:.1f}s, "
+            f"Probes={cumulative_timing['probe_time']:.1f}s, "
+            f"Extraction={cumulative_timing['extraction_time']:.1f}s"
+        )
 
         avg_time = sum(per_config_times) / len(per_config_times)
         remaining_configs = len(configs_to_run) - (idx + 1)
@@ -361,11 +413,19 @@ def main() -> None:
         solo_p_b = solo_probes_by_trait_level.get((m, t, lvl_b), [])
         combined_solo = solo_p_a + solo_p_b
 
-        pair_transcripts = [tr for tr in all_transcripts if tr["method"] == m and tr["trait_code"] == t and tr.get("condition") == "interactive"]
+        pair_transcripts = [
+            tr for tr in all_transcripts
+            if tr["method"] == m and tr["trait_code"] == t and tr.get("pair") == pair_str and tr.get("condition") == "interactive"
+        ]
+        solo_t_a = solo_transcripts_by_trait_level.get((m, t, lvl_a), [])
+        solo_t_b = solo_transcripts_by_trait_level.get((m, t, lvl_b), [])
+        combined_solo_trans = solo_t_a + solo_t_b
+
         analysis = analyze_pair_condition(
             interactive_probes=p_list,
             solo_probes=combined_solo,
             interactive_transcripts=pair_transcripts,
+            solo_transcripts=combined_solo_trans,
             n_resamples=1000,
             seed=args.seed,
         )

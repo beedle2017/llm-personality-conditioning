@@ -357,7 +357,13 @@ def generate_summary_tables(
 
     rows = []
     for a in analyses:
-        manip_flag = "WARN (uninformative)" if a["is_uninformative"] else "PASS"
+        if a["level_a"] == a["level_b"]:
+            manip_flag = "N/A"
+        elif a["is_uninformative"]:
+            manip_flag = "WARN (uninformative)"
+        else:
+            manip_flag = "PASS"
+
         head_flag = "WARN (ceiling-limited)" if a["is_ceiling_limited"] else "PASS"
         rows.append({
             "method": a["method"],
@@ -414,7 +420,12 @@ def generate_summary_tables(
     ])
 
     for a in analyses:
-        m_status = "WARN" if a["is_uninformative"] else "PASS"
+        if a["level_a"] == a["level_b"]:
+            m_status = "N/A"
+        elif a["is_uninformative"]:
+            m_status = "WARN"
+        else:
+            m_status = "PASS"
         h_status = "WARN" if a["is_ceiling_limited"] else "PASS"
         inv_status = "PASS" if a["invalid_rate"] < 0.20 else "WARN"
         md_lines.append(
