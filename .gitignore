@@ -230,3 +230,4 @@ artifacts/steering/caa/generations/
 outputs/
 artifacts/agents/transcripts_*.jsonl
 artifacts/agents_pilot/
+artifacts/agents_timing/
