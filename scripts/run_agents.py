@@ -77,7 +77,7 @@ def load_yaml_config() -> dict[str, Any]:
     return {}
 
 
-def is_config_completed(out_dir: Path, method: str, trait: str, pair: str) -> bool:
+def is_config_completed(out_dir: Path, method: str, trait: str, pair: str, task_type: str = "all") -> bool:
     """Check if config results already exist in probes.csv."""
     probes_csv = out_dir / "probes.csv"
     if not probes_csv.exists():
@@ -85,7 +85,12 @@ def is_config_completed(out_dir: Path, method: str, trait: str, pair: str) -> bo
     with probes_csv.open("r", encoding="utf-8", errors="ignore") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            if row.get("method") == method and row.get("trait") == trait and row.get("pair") == pair:
+            if (
+                row.get("method") == method
+                and row.get("trait") == trait
+                and row.get("pair") == pair
+                and (task_type == "all" or row.get("task_type") == task_type)
+            ):
                 return True
     return False
 
@@ -97,7 +102,7 @@ def append_probes_csv(out_dir: Path, probe_rows: list[dict[str, Any]]) -> None:
     probes_csv = out_dir / "probes.csv"
     exists = probes_csv.exists() and probes_csv.stat().st_size > 0
     fields = [
-        "method", "trait", "pair", "agent", "level", "checkpoint",
+        "method", "trait", "pair", "task_id", "task_type", "agent", "level", "checkpoint",
         "item_id", "score", "invalid", "dialogue_id", "condition",
         "statement", "extracted"
     ]
@@ -174,6 +179,7 @@ def main() -> None:
     parser.add_argument("--exploratory", action="store_true", help="Include O and N traits")
     parser.add_argument("--positive-control", action="store_true", help="Run positive control injection at cp 4")
     parser.add_argument("--smoke", action="store_true", help="Smoke test (1 trait, 1 pair, 2 rounds, 2 dialogues)")
+    parser.add_argument("--task-type", choices=["all", "collaborative", "disagreement"], default="all", help="Task type to filter from tasks.json")
     parser.add_argument("--resume", action="store_true", default=True, help="Resume previous incomplete run")
     parser.add_argument("--no-resume", action="store_false", dest="resume", help="Overwrite previous run")
     parser.add_argument("--max-configs", type=int, default=None, help="Max configs to run")
@@ -267,11 +273,51 @@ def main() -> None:
     solo_probes_by_trait_level: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
     solo_transcripts_by_trait_level: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
 
+    if args.resume:
+        probes_csv = out_dir / "probes.csv"
+        if probes_csv.exists():
+            with probes_csv.open("r", encoding="utf-8", errors="ignore") as f:
+                for row in csv.DictReader(f):
+                    r = dict(row)
+                    r["checkpoint"] = int(r["checkpoint"]) if r.get("checkpoint") else 0
+                    r["level"] = int(r["level"]) if r.get("level") else 1
+                    r["dialogue_id"] = int(r["dialogue_id"]) if r.get("dialogue_id") else 0
+                    r["invalid"] = str(r.get("invalid", "")).lower() == "true"
+                    r["score"] = float(r["score"]) if r.get("score") not in ("", None) else None
+                    if r.get("condition") == "solo_control":
+                        key = (r["method"], r["trait"], r["level"])
+                        solo_probes_by_trait_level.setdefault(key, []).append(r)
+                    if r.get("checkpoint") == 0 and not r.get("invalid") and r.get("score") is not None:
+                        cp0_key = (r["method"], r["trait"], r["level"], r.get("item_id", "item_0"))
+                        if cp0_key not in cp0_probe_cache:
+                            cp0_probe_cache[cp0_key] = {
+                                "statement": r.get("statement", ""),
+                                "extracted": r.get("extracted", ""),
+                                "score": r.get("score"),
+                                "invalid": r.get("invalid"),
+                            }
+        for tf in out_dir.glob("transcripts_*.jsonl"):
+            with tf.open("r", encoding="utf-8", errors="ignore") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        try:
+                            t = json.loads(line)
+                            if t.get("condition") == "solo_control":
+                                key = (t["method"], t.get("trait_code", t.get("trait")), t.get("level", 1))
+                                solo_transcripts_by_trait_level.setdefault(key, []).append(t)
+                        except Exception:
+                            pass
+        if solo_probes_by_trait_level:
+            logger.info(f"Loaded existing solo controls for {len(solo_probes_by_trait_level)} (method, trait, level) conditions from disk.")
+        if cp0_probe_cache:
+            logger.info(f"Preloaded {len(cp0_probe_cache)} checkpoint-0 probes into cache from disk.")
+
     current_loaded_method: str | None = None
 
     for idx, (method, trait, pair_str) in enumerate(configs_to_run):
-        if args.resume and is_config_completed(out_dir, method, trait, pair_str):
-            logger.info(f"Skipping already completed config ({idx+1}/{len(configs_to_run)}): {method}-{trait}-{pair_str}")
+        if args.resume and is_config_completed(out_dir, method, trait, pair_str, task_type=args.task_type):
+            logger.info(f"Skipping already completed config ({idx+1}/{len(configs_to_run)}): {method}-{trait}-{pair_str} (type={args.task_type})")
             completed_count += 1
             continue
 
@@ -283,15 +329,19 @@ def main() -> None:
         current_loaded_method = method
 
         t0 = time.time()
-        logger.info(f"Running config ({idx+1}/{len(configs_to_run)}): method={method}, trait={trait}, pair={pair_str}")
+        logger.info(f"Running config ({idx+1}/{len(configs_to_run)}): method={method}, trait={trait}, pair={pair_str}, task_type={args.task_type}")
 
         levels = [int(x) for x in pair_str.split("-")]
         lvl_a, lvl_b = levels[0], levels[1]
 
-        # Select tasks tagged with this trait, or all tasks if not enough
-        matching_tasks = [t for t in all_tasks if trait in t.get("traits", [])]
+        # Select tasks filtered by task_type and tagged with this trait
+        available_tasks = all_tasks
+        if args.task_type != "all":
+            available_tasks = [t for t in all_tasks if t.get("type") == args.task_type]
+
+        matching_tasks = [t for t in available_tasks if trait in t.get("traits", [])]
         if len(matching_tasks) < args.dialogues_per_pair:
-            matching_tasks = (matching_tasks + all_tasks)[:args.dialogues_per_pair]
+            matching_tasks = (matching_tasks + available_tasks)[:args.dialogues_per_pair]
         else:
             matching_tasks = matching_tasks[:args.dialogues_per_pair]
 
@@ -398,27 +448,73 @@ def main() -> None:
 
     # Statistical analysis & summary generation
     logger.info("Computing analysis metrics and generating summary tables...")
-    # Group by (method, trait, pair)
-    grouped_probes: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
-    for p in all_probes:
+    # Load all probes from disk (probes.csv) to ensure all completed runs are included
+    probes_csv = out_dir / "probes.csv"
+    all_disk_probes: list[dict[str, Any]] = []
+    if probes_csv.exists():
+        with probes_csv.open("r", encoding="utf-8", errors="ignore") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                r = dict(row)
+                r["checkpoint"] = int(r["checkpoint"]) if r.get("checkpoint") else 0
+                r["level"] = int(r["level"]) if r.get("level") else 1
+                r["dialogue_id"] = int(r["dialogue_id"]) if r.get("dialogue_id") else 0
+                r["invalid"] = str(r.get("invalid", "")).lower() == "true"
+                r["score"] = float(r["score"]) if r.get("score") not in ("", None) else None
+                all_disk_probes.append(r)
+    else:
+        all_disk_probes = all_probes
+
+    # Load all transcripts from disk
+    all_disk_transcripts: list[dict[str, Any]] = []
+    for tf in out_dir.glob("transcripts_*.jsonl"):
+        with tf.open("r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        all_disk_transcripts.append(json.loads(line))
+                    except Exception:
+                        pass
+    if not all_disk_transcripts:
+        all_disk_transcripts = all_transcripts
+
+    # Separate solo controls
+    solo_disk_probes: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
+    for p in all_disk_probes:
+        if p.get("condition") == "solo_control":
+            key = (p["method"], p["trait"], p["level"])
+            solo_disk_probes.setdefault(key, []).append(p)
+
+    solo_disk_trans: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
+    for t in all_disk_transcripts:
+        if t.get("condition") == "solo_control":
+            key = (t["method"], t.get("trait_code", t.get("trait")), t.get("level", 1))
+            solo_disk_trans.setdefault(key, []).append(t)
+
+    # Group interactive probes by (method, trait, pair, task_type)
+    grouped_probes: dict[tuple[str, str, str, str], list[dict[str, Any]]] = {}
+    for p in all_disk_probes:
         if p.get("condition") == "interactive":
-            key = (p["method"], p["trait"], p["pair"])
+            tt = p.get("task_type", "collaborative")
+            key = (p["method"], p["trait"], p["pair"], tt)
             grouped_probes.setdefault(key, []).append(p)
 
     analyses = []
-    for (m, t, pair_str), p_list in grouped_probes.items():
+    for (m, t, pair_str, tt), p_list in grouped_probes.items():
         levels = [int(x) for x in pair_str.split("-")]
         lvl_a, lvl_b = levels[0], levels[1]
-        solo_p_a = solo_probes_by_trait_level.get((m, t, lvl_a), [])
-        solo_p_b = solo_probes_by_trait_level.get((m, t, lvl_b), [])
+        solo_p_a = solo_disk_probes.get((m, t, lvl_a), [])
+        solo_p_b = solo_disk_probes.get((m, t, lvl_b), [])
         combined_solo = solo_p_a + solo_p_b
 
         pair_transcripts = [
-            tr for tr in all_transcripts
-            if tr["method"] == m and tr["trait_code"] == t and tr.get("pair") == pair_str and tr.get("condition") == "interactive"
+            tr for tr in all_disk_transcripts
+            if tr.get("method") == m and (tr.get("trait_code") == t or tr.get("trait") == t) and tr.get("pair") == pair_str
+            and tr.get("task_type", "collaborative") == tt and tr.get("condition") == "interactive"
         ]
-        solo_t_a = solo_transcripts_by_trait_level.get((m, t, lvl_a), [])
-        solo_t_b = solo_transcripts_by_trait_level.get((m, t, lvl_b), [])
+        solo_t_a = solo_disk_trans.get((m, t, lvl_a), [])
+        solo_t_b = solo_disk_trans.get((m, t, lvl_b), [])
         combined_solo_trans = solo_t_a + solo_t_b
 
         analysis = analyze_pair_condition(

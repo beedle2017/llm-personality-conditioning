@@ -21,6 +21,7 @@ from agents.analysis import (
     analyze_pair_condition,
     bootstrap_ci,
     compute_agent_endorsements,
+    generate_summary_tables,
 )
 from agents.conditioning import ConditionedAgent, FakeGenerator
 from agents.dialogue import DialogueState, run_dialogues, truncate_history
@@ -417,6 +418,83 @@ class TestAnalysisMetricsAndClassification(unittest.TestCase):
             md_text = md_p.read_text(encoding="utf-8")
             self.assertIn("| N/A |", md_text)
             self.assertIn("Manipulation Check: `N/A`", md_text)
+
+    def test_item_only_manipulation_check_warns_on_weak_separation(self):
+        """Regression test: Dedupe cached k=0 rows and bootstrap over items only.
+
+        When agent B has 4/5 items endorsed and agent A has 3/5 items endorsed,
+        paired difference is [0, 0, 0, 1, 0]. The 2.5% bootstrap CI includes 0,
+        triggering WARN (uninformative).
+        """
+        probes = []
+        # 4 dialogues with 5 items each (cached identical scores)
+        for d in range(4):
+            for i, (sc_a, sc_b) in enumerate([(1.0, 1.0), (1.0, 1.0), (0.0, 0.0), (0.0, 1.0), (1.0, 1.0)]):
+                probes.append({
+                    "method": "steering", "trait": "A", "pair": "1-5", "agent": "A", "level": 1,
+                    "checkpoint": 0, "dialogue_id": d, "item_id": f"item_{i}", "score": sc_a, "invalid": False,
+                    "condition": "interactive",
+                })
+                probes.append({
+                    "method": "steering", "trait": "A", "pair": "1-5", "agent": "B", "level": 5,
+                    "checkpoint": 0, "dialogue_id": d, "item_id": f"item_{i}", "score": sc_b, "invalid": False,
+                    "condition": "interactive",
+                })
+        analysis = analyze_pair_condition(interactive_probes=probes, n_resamples=1000, seed=20261026)
+        self.assertTrue(analysis["is_uninformative"])
+        self.assertLessEqual(analysis["manipulation_ci"].ci_low, 0.0)
+
+    def test_ceiling_saturated_detection(self):
+        """Regression test: When all final checkpoint probes sit at 1.0, report ceiling-saturated."""
+        probes = []
+        for d in range(4):
+            for i in range(5):
+                probes.append({
+                    "method": "steering", "trait": "A", "pair": "1-5", "agent": "A", "level": 1,
+                    "checkpoint": 0, "dialogue_id": d, "item_id": f"item_{i}", "score": 0.6, "invalid": False,
+                    "condition": "interactive",
+                })
+                probes.append({
+                    "method": "steering", "trait": "A", "pair": "1-5", "agent": "B", "level": 5,
+                    "checkpoint": 0, "dialogue_id": d, "item_id": f"item_{i}", "score": 0.8, "invalid": False,
+                    "condition": "interactive",
+                })
+                # k=6: all 1.0
+                probes.append({
+                    "method": "steering", "trait": "A", "pair": "1-5", "agent": "A", "level": 1,
+                    "checkpoint": 6, "dialogue_id": d, "item_id": f"item_{i}", "score": 1.0, "invalid": False,
+                    "condition": "interactive",
+                })
+                probes.append({
+                    "method": "steering", "trait": "A", "pair": "1-5", "agent": "B", "level": 5,
+                    "checkpoint": 6, "dialogue_id": d, "item_id": f"item_{i}", "score": 1.0, "invalid": False,
+                    "condition": "interactive",
+                })
+        analysis = analyze_pair_condition(interactive_probes=probes, n_resamples=100, seed=42)
+        self.assertTrue(analysis["is_ceiling_saturated"])
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            csv_p, md_p = generate_summary_tables([analysis], Path(tmp_dir))
+            md_text = md_p.read_text(encoding="utf-8")
+            self.assertIn("WARN (ceiling-saturated)", md_text)
+            self.assertIn("[ceiling-saturated]", md_text)
+
+    def test_bfi_error_and_pis_calculation(self):
+        """Test BFI error (1 + 4r vs target) and PIS calculations."""
+        # Agent A (target 1, endorsement 0.2 -> BFI = 1 + 0.8 = 1.8 -> err = 0.8)
+        # Agent B (target 5, endorsement 1.0 -> BFI = 1 + 4.0 = 5.0 -> err = 0.0)
+        # Mean BFI error = 0.4
+        # Trait C baseline = 0.7667
+        # PIS A = -1 * (0.2 - 0.7667) = +0.5667
+        # PIS B = +1 * (1.0 - 0.7667) = +0.2333
+        # Mean PIS = (0.5667 + 0.2333) / 2 = +0.4000
+        probes = [
+            {"method": "prompting", "trait": "C", "pair": "1-5", "agent": "A", "level": 1, "checkpoint": 0, "dialogue_id": 0, "item_id": "i0", "score": 0.2, "invalid": False, "condition": "interactive"},
+            {"method": "prompting", "trait": "C", "pair": "1-5", "agent": "B", "level": 5, "checkpoint": 0, "dialogue_id": 0, "item_id": "i0", "score": 1.0, "invalid": False, "condition": "interactive"},
+        ]
+        analysis = analyze_pair_condition(interactive_probes=probes, n_resamples=100, seed=42)
+        self.assertAlmostEqual(analysis["bfi_error_0"], 0.4, places=2)
+        self.assertAlmostEqual(analysis["pis_0"], 0.4, places=2)
 
 
 class TestEndToEndSmoke(unittest.TestCase):

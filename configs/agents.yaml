@@ -6,15 +6,15 @@ seed: 20261026
 default_split: "development"
 
 # Dialogue settings
-rounds: 8
-checkpoints: [0, 2, 4, 8]
-dialogues_per_pair: 6
-dialogues_per_pair_laptop: 6
+rounds: 6
+checkpoints: [0, 6]
+dialogues_per_pair: 4
+dialogues_per_pair_laptop: 4
 dialogues_per_pair_smoke: 2
 
 # Probe item settings
-probe_items: 10
-probe_items_laptop: 10
+probe_items: 5
+probe_items_laptop: 5
 probe_items_smoke: 4
 max_new_tokens_turn: 128
 max_new_tokens_probe: 128

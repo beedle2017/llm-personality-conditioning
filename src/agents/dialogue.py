@@ -269,6 +269,8 @@ def run_dialogues(
                                 "method": method,
                                 "trait": trait_code,
                                 "pair": pair_label,
+                                "task_id": state.task.get("id", f"task_{state.dialogue_id}"),
+                                "task_type": state.task.get("type", "collaborative"),
                                 "agent": role,
                                 "level": level,
                                 "checkpoint": 0,
@@ -323,6 +325,8 @@ def run_dialogues(
                                 "method": method,
                                 "trait": trait_code,
                                 "pair": pair_label,
+                                "task_id": state.task.get("id", f"task_{state.dialogue_id}"),
+                                "task_type": state.task.get("type", "collaborative"),
                                 "agent": role,
                                 "level": level,
                                 "checkpoint": 0,
@@ -418,10 +422,13 @@ def run_dialogues(
                 clean_ext_str = ext if ext is not None else ""
                 score = score_extraction(item, clean_ext_str)
                 is_invalid = score is None
+                st = states[d_id]
                 probe_records.append({
                     "method": method,
                     "trait": trait_code,
                     "pair": pair_label,
+                    "task_id": st.task.get("id", f"task_{d_id}"),
+                    "task_type": st.task.get("type", "collaborative"),
                     "agent": role,
                     "level": level,
                     "checkpoint": current_round,
@@ -503,6 +510,8 @@ def run_dialogues(
             state.history_a.append({"role": "assistant", "content": turn_text})
             transcripts.append({
                 "dialogue_id": d_idx,
+                "task_id": state.task.get("id", f"task_{d_idx}"),
+                "task_type": state.task.get("type", "collaborative"),
                 "round": round_num,
                 "half_turn": 1,
                 "speaker": "A",
@@ -585,6 +594,8 @@ def run_dialogues(
                 state.history_a.append({"role": "user", "content": turn_text_b})
                 transcripts.append({
                     "dialogue_id": d_idx,
+                    "task_id": state.task.get("id", f"task_{d_idx}"),
+                    "task_type": state.task.get("type", "collaborative"),
                     "round": round_num,
                     "half_turn": 2,
                     "speaker": "B",

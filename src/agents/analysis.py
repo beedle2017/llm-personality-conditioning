@@ -10,6 +10,15 @@ from typing import Any
 
 import numpy as np
 
+# Baseline endorsement rates from artifacts/eval/default_behaviorbench.csv
+BASELINE_RATES: dict[str, float] = {
+    "C": 0.7667,  # Conscientiousness
+    "A": 0.9000,  # Agreeableness
+    "E": 1.0000,  # Extraversion
+    "O": 0.9333,  # Openness
+    "N": 0.4600,  # Neuroticism
+}
+
 
 @dataclass
 class BootstrapResult:
@@ -114,6 +123,7 @@ def analyze_pair_condition(
     method = first["method"]
     trait = first["trait"]
     pair_str = first["pair"]
+    task_type = first.get("task_type", "collaborative")
     parts = [int(p) for p in pair_str.split("-")]
     level_a, level_b = parts[0], parts[1]
 
@@ -132,21 +142,44 @@ def analyze_pair_condition(
 
     # Manipulation check at k=0
     # Higher level agent must have higher endorsement than lower level agent with CI > 0
-    scores_a_0 = endorsements.get(key_a_0, {}).get("scores", [])
-    scores_b_0 = endorsements.get(key_b_0, {}).get("scores", [])
-
+    # Dedupe cached k=0 rows and bootstrap over items only
     is_uninformative = False
-    manipulation_p = float("nan")
     manipulation_ci = BootstrapResult(0.0, 0.0, 0.0)
 
-    if level_a != level_b and scores_a_0 and scores_b_0:
-        higher_scores = scores_b_0 if level_b > level_a else scores_a_0
-        lower_scores = scores_a_0 if level_b > level_a else scores_b_0
-        # Compute paired or difference CI
-        n_min = min(len(higher_scores), len(lower_scores))
-        diffs = [h - l for h, l in zip(higher_scores[:n_min], lower_scores[:n_min])]
-        manipulation_ci = bootstrap_ci(diffs, n_resamples=n_resamples, seed=seed)
-        if manipulation_ci.ci_low <= 0:
+    if level_a != level_b:
+        agent_high = "B" if level_b > level_a else "A"
+        agent_low = "A" if level_b > level_a else "B"
+
+        s0_items_high: dict[str, float] = {}
+        s0_items_low: dict[str, float] = {}
+        for r in interactive_probes:
+            if r.get("checkpoint") == 0 and not r.get("invalid") and r.get("score") is not None:
+                agent_role = r["agent"]
+                it_id = r.get("item_id", "item_0")
+                if agent_role == agent_high and it_id not in s0_items_high:
+                    s0_items_high[it_id] = float(r["score"])
+                elif agent_role == agent_low and it_id not in s0_items_low:
+                    s0_items_low[it_id] = float(r["score"])
+
+        common_items = [it for it in s0_items_high if it in s0_items_low]
+        if common_items:
+            diffs = [s0_items_high[it] - s0_items_low[it] for it in common_items]
+            diffs_arr = np.asarray(diffs, dtype=float)
+            rng_mc = np.random.default_rng(seed)
+            n_items = len(diffs_arr)
+            boot_diff_means = []
+            for _ in range(n_resamples):
+                idx_sample = rng_mc.integers(0, n_items, size=n_items)
+                boot_diff_means.append(float(np.mean(diffs_arr[idx_sample])))
+
+            manip_mean = float(np.mean(diffs_arr))
+            manip_ci_low = float(np.percentile(boot_diff_means, 2.5))
+            manip_ci_high = float(np.percentile(boot_diff_means, 97.5))
+            manipulation_ci = BootstrapResult(mean=manip_mean, ci_low=manip_ci_low, ci_high=manip_ci_high)
+
+            if manip_ci_low <= 0:
+                is_uninformative = True
+        else:
             is_uninformative = True
 
     # Directions d_i
@@ -158,6 +191,16 @@ def analyze_pair_condition(
     ceiling_limited_a = (r_a_0 >= 0.95 and d_a > 0) or (r_a_0 <= 0.05 and d_a < 0)
     ceiling_limited_b = (r_b_0 >= 0.95 and d_b > 0) or (r_b_0 <= 0.05 and d_b < 0)
     is_ceiling_limited = ceiling_limited_a or ceiling_limited_b
+
+    # Check for ceiling saturation at final checkpoint
+    k_final_interactive_probes = [
+        r for r in interactive_probes
+        if r.get("checkpoint") == final_cp and not r.get("invalid") and r.get("score") is not None
+    ]
+    is_ceiling_saturated = (
+        len(k_final_interactive_probes) > 0
+        and all(float(r["score"]) >= 0.999 for r in k_final_interactive_probes)
+    )
 
     # Behavioral shifts across checkpoints
     shifts_a: dict[int, float] = {}
@@ -433,10 +476,47 @@ def analyze_pair_condition(
     invalid_probes = sum(1 for r in interactive_probes if r.get("invalid"))
     overall_invalid_rate = invalid_probes / max(1, total_probes)
 
+    # Endorsements at final checkpoint
+    key_a_final = (method, trait, pair_str, "A", level_a, final_cp)
+    key_b_final = (method, trait, pair_str, "B", level_b, final_cp)
+    r_a_final = endorsements.get(key_a_final, {}).get("mean", r_a_0)
+    r_b_final = endorsements.get(key_b_final, {}).get("mean", r_b_0)
+
+    # BFI Error: |(1 + 4r) - target|
+    bfi_err_a_0 = abs((1.0 + 4.0 * r_a_0) - float(level_a)) if not math.isnan(r_a_0) else float("nan")
+    bfi_err_b_0 = abs((1.0 + 4.0 * r_b_0) - float(level_b)) if not math.isnan(r_b_0) else float("nan")
+    errs_0 = [e for e in (bfi_err_a_0, bfi_err_b_0) if not math.isnan(e)]
+    bfi_error_0 = float(np.mean(errs_0)) if errs_0 else float("nan")
+
+    bfi_err_a_k = abs((1.0 + 4.0 * r_a_final) - float(level_a)) if not math.isnan(r_a_final) else float("nan")
+    bfi_err_b_k = abs((1.0 + 4.0 * r_b_final) - float(level_b)) if not math.isnan(r_b_final) else float("nan")
+    errs_k = [e for e in (bfi_err_a_k, bfi_err_b_k) if not math.isnan(e)]
+    bfi_error_final = float(np.mean(errs_k)) if errs_k else float("nan")
+
+    # PIS: sign(target - 3) * (r - baseline_rate)
+    base_rate = BASELINE_RATES.get(trait, 0.5)
+
+    def _agent_pis(r_val: float, tgt: int) -> float:
+        if math.isnan(r_val) or tgt == 3:
+            return float("nan")
+        direction = 1.0 if tgt > 3 else -1.0
+        return direction * (r_val - base_rate)
+
+    pis_a_0 = _agent_pis(r_a_0, level_a)
+    pis_b_0 = _agent_pis(r_b_0, level_b)
+    valid_pis_0 = [p for p in (pis_a_0, pis_b_0) if not math.isnan(p)]
+    pis_0 = float(np.mean(valid_pis_0)) if valid_pis_0 else float("nan")
+
+    pis_a_k = _agent_pis(r_a_final, level_a)
+    pis_b_k = _agent_pis(r_b_final, level_b)
+    valid_pis_k = [p for p in (pis_a_k, pis_b_k) if not math.isnan(p)]
+    pis_final = float(np.mean(valid_pis_k)) if valid_pis_k else float("nan")
+
     return {
         "method": method,
         "trait": trait,
         "pair": pair_str,
+        "task_type": task_type,
         "level_a": level_a,
         "level_b": level_b,
         "final_checkpoint": final_cp,
@@ -444,6 +524,7 @@ def analyze_pair_condition(
         "r_b_0": r_b_0,
         "is_uninformative": is_uninformative,
         "is_ceiling_limited": is_ceiling_limited,
+        "is_ceiling_saturated": is_ceiling_saturated,
         "manipulation_ci": manipulation_ci,
         "shifts_a": shifts_a,
         "shifts_b": shifts_b,
@@ -459,6 +540,10 @@ def analyze_pair_condition(
         "feature_breakdown": feature_breakdown,
         "classification": classification,
         "invalid_rate": overall_invalid_rate,
+        "bfi_error": bfi_error_final,
+        "pis": pis_final,
+        "bfi_error_0": bfi_error_0,
+        "pis_0": pis_0,
     }
 
 
@@ -477,6 +562,7 @@ def generate_summary_tables(
         "method",
         "trait",
         "pair",
+        "task_type",
         "level_a",
         "level_b",
         "r_a_0",
@@ -489,6 +575,10 @@ def generate_summary_tables(
         "linguistic_shift",
         "linguistic_ci_low",
         "linguistic_ci_high",
+        "bfi_error",
+        "pis",
+        "bfi_error_0",
+        "pis_0",
         "classification",
         "invalid_rate",
     ] + [f"ling_{f}" for f in FEATURE_NAMES]
@@ -502,11 +592,18 @@ def generate_summary_tables(
         else:
             manip_flag = "PASS"
 
-        head_flag = "WARN (ceiling-limited)" if a["is_ceiling_limited"] else "PASS"
+        if a.get("is_ceiling_saturated"):
+            head_flag = "WARN (ceiling-saturated)"
+        elif a.get("is_ceiling_limited"):
+            head_flag = "WARN (ceiling-limited)"
+        else:
+            head_flag = "PASS"
+
         row_dict = {
             "method": a["method"],
             "trait": a["trait"],
             "pair": a["pair"],
+            "task_type": a.get("task_type", "collaborative"),
             "level_a": a["level_a"],
             "level_b": a["level_b"],
             "r_a_0": round(a["r_a_0"], 4) if not math.isnan(a["r_a_0"]) else "",
@@ -519,6 +616,10 @@ def generate_summary_tables(
             "linguistic_shift": round(a["linguistic_shift_mean"], 4),
             "linguistic_ci_low": round(a["linguistic_ci_low"], 4),
             "linguistic_ci_high": round(a["linguistic_ci_high"], 4),
+            "bfi_error": round(a["bfi_error"], 4) if not math.isnan(a.get("bfi_error", float("nan"))) else "",
+            "pis": round(a["pis"], 4) if not math.isnan(a.get("pis", float("nan"))) else "",
+            "bfi_error_0": round(a["bfi_error_0"], 4) if not math.isnan(a.get("bfi_error_0", float("nan"))) else "",
+            "pis_0": round(a["pis_0"], 4) if not math.isnan(a.get("pis_0", float("nan"))) else "",
             "classification": a["classification"],
             "invalid_rate": round(a["invalid_rate"], 4),
         }
@@ -539,15 +640,20 @@ def generate_summary_tables(
         "",
         "## 2x2 Accommodation Classification and Behavioral Shift",
         "",
-        "| Method | Trait | Pair | r_A(0) | r_B(0) | Manip Check | Headroom | Net Shift [95% CI] | Ling Shift [95% CI] | Classification | Invalid Rate |",
-        "|---|---|---|---|---|---|---|---|---|---|---|",
+        "| Method | Trait | Pair | Task Type | r_A(0) | r_B(0) | Manip Check | Headroom | Net Shift [95% CI] | Ling Shift [95% CI] | BFI Err | PIS | Classification | Invalid Rate |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
-    for r in rows:
-        b_ci = f"{r['net_social_shift']:.3f} [{r['behavioral_ci_low']:.3f}, {r['behavioral_ci_high']:.3f}]"
+    for r, a in zip(rows, analyses):
+        if a.get("is_ceiling_saturated"):
+            b_ci = f"{r['net_social_shift']:.3f} [ceiling-saturated]"
+        else:
+            b_ci = f"{r['net_social_shift']:.3f} [{r['behavioral_ci_low']:.3f}, {r['behavioral_ci_high']:.3f}]"
         l_ci = f"{r['linguistic_shift']:.3f} [{r['linguistic_ci_low']:.3f}, {r['linguistic_ci_high']:.3f}]"
+        bfi_str = f"{r['bfi_error']:.3f}" if r["bfi_error"] != "" else "N/A"
+        pis_str = f"{r['pis']:+.3f}" if r["pis"] != "" else "N/A"
         md_lines.append(
-            f"| {r['method']} | {r['trait']} | {r['pair']} | {r['r_a_0']} | {r['r_b_0']} | "
-            f"{r['manipulation_check']} | {r['headroom_check']} | {b_ci} | {l_ci} | "
+            f"| {r['method']} | {r['trait']} | {r['pair']} | {r['task_type']} | {r['r_a_0']} | {r['r_b_0']} | "
+            f"{r['manipulation_check']} | {r['headroom_check']} | {b_ci} | {l_ci} | {bfi_str} | {pis_str} | "
             f"**{r['classification']}** | {r['invalid_rate']:.1%} |"
         )
 
@@ -556,12 +662,12 @@ def generate_summary_tables(
         "",
         "## Per-Feature Linguistic Accommodation Breakdown (Style Distance Reduction)",
         "",
-        "| Method | Trait | Pair | Word Count | Hedges/100 | Contractions | Word Length | 1p Pronouns | Sentiment | BoW Cosine | Net Composite |",
-        "|---|---|---|---|---|---|---|---|---|---|---|",
+        "| Method | Trait | Pair | Task Type | Word Count | Hedges/100 | Contractions | Word Length | 1p Pronouns | Sentiment | BoW Cosine | Net Composite |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
     ])
     for r in rows:
         md_lines.append(
-            f"| {r['method']} | {r['trait']} | {r['pair']} | "
+            f"| {r['method']} | {r['trait']} | {r['pair']} | {r['task_type']} | "
             f"{r.get('ling_word_count', 0.0):+.3f} | {r.get('ling_hedges_per_100', 0.0):+.3f} | "
             f"{r.get('ling_contraction_rate', 0.0):+.3f} | {r.get('ling_mean_word_length', 0.0):+.3f} | "
             f"{r.get('ling_pronoun_1p_rate', 0.0):+.3f} | {r.get('ling_sentiment', 0.0):+.3f} | "
@@ -586,10 +692,15 @@ def generate_summary_tables(
             m_status = "WARN"
         else:
             m_status = "PASS"
-        h_status = "WARN" if a["is_ceiling_limited"] else "PASS"
+        if a.get("is_ceiling_saturated"):
+            h_status = "WARN (ceiling-saturated)"
+        elif a.get("is_ceiling_limited"):
+            h_status = "WARN (ceiling-limited)"
+        else:
+            h_status = "PASS"
         inv_status = "PASS" if a["invalid_rate"] < 0.20 else "WARN"
         md_lines.append(
-            f"- **{a['method']} - {a['trait']} ({a['pair']})**: "
+            f"- **{a['method']} - {a['trait']} ({a['pair']}) [{a.get('task_type', 'collaborative')}]**: "
             f"Manipulation Check: `{m_status}`, Headroom: `{h_status}`, Invalid Rate: `{inv_status}` ({a['invalid_rate']:.1%})"
         )
 

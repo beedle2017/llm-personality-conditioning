@@ -165,7 +165,9 @@ def plot_net_shifts_bar(summary_df: pd.DataFrame, out_path: Path) -> None:
         t_name = str(r["trait"])
         la = r.get("level_a", "")
         lb = r.get("level_b", "")
-        labels.append(f"{m_name} · {t_name} · {la} vs {lb}")
+        tt = r.get("task_type", "")
+        tt_suffix = " (disagree)" if tt == "disagreement" else ""
+        labels.append(f"{m_name} · {t_name} · {la} vs {lb}{tt_suffix}")
 
     x = np.arange(len(labels))
     width = 0.35
