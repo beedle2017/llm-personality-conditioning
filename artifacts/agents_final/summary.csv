@@ -1,0 +1,7 @@
+method,trait,pair,level_a,level_b,r_a_0,r_b_0,manipulation_check,headroom_check,net_social_shift,behavioral_ci_low,behavioral_ci_high,linguistic_shift,linguistic_ci_low,linguistic_ci_high,classification,invalid_rate,ling_word_count,ling_hedges_per_100,ling_contraction_rate,ling_mean_word_length,ling_pronoun_1p_rate,ling_sentiment,ling_bow_cosine
+prompting,C,1-5,1,5,0.2,1.0,PASS,PASS,0.0178,-0.225,0.3,-0.0607,-0.142,0.0199,neither,0.0,-0.1163,0.2386,-0.7708,0.0033,0.7369,-0.2859,-0.2305
+prompting,A,1-5,1,5,0.6,0.8,WARN (uninformative),PASS,0.0008,-0.1,0.1,0.573,0.4363,0.6924,linguistic-only,0.0,1.2061,1.2618,0.0119,1.2577,-0.0743,-0.5554,0.9031
+prompting,E,1-5,1,5,0.2,1.0,PASS,PASS,0.0,0.0,0.0,0.2392,-0.0458,0.5911,neither,0.0,1.0015,0.4551,-0.6628,0.6286,0.1007,-0.1252,0.2764
+prompting,C,3-3,3,3,0.8,0.8,N/A,PASS,0.0469,-0.1756,0.25,-0.0798,-0.1428,-0.0273,neither,0.0,-0.2756,-0.1469,0.1865,-0.2013,-0.5184,0.2756,0.1215
+steering,A,1-5,1,5,0.6,0.8,PASS,PASS,0.0,0.0,0.0,0.5972,0.3453,0.8492,linguistic-only,0.0,1.0415,-0.0805,0.6491,0.5899,0.0363,1.6053,0.3388
+rewrite,C,1-5,1,5,0.4,0.8,PASS,PASS,0.0731,0.0,0.225,0.2653,0.0883,0.4924,linguistic-only,0.0,0.0088,-0.3847,0.8262,0.052,0.1216,1.0745,0.1585
