@@ -496,6 +496,32 @@ class TestAnalysisMetricsAndClassification(unittest.TestCase):
         self.assertAlmostEqual(analysis["bfi_error_0"], 0.4, places=2)
         self.assertAlmostEqual(analysis["pis_0"], 0.4, places=2)
 
+    def test_qualitative_examples_quotes_are_exact_substrings(self):
+        """Verify that every quoted turn in qualitative_examples.md is copied verbatim from transcripts."""
+        import re
+        md_path = ROOT / "qualitative_examples.md"
+        self.assertTrue(md_path.exists(), "qualitative_examples.md does not exist")
+        content = md_path.read_text(encoding="utf-8")
+
+        # Load all transcript turns
+        all_turns = []
+        for f in (ROOT / "artifacts" / "agents_final").glob("transcripts_*.jsonl"):
+            with f.open("r", encoding="utf-8") as fh:
+                for line in fh:
+                    if line.strip():
+                        all_turns.append(json.loads(line)["text"])
+
+        quotes = re.findall(r'>\s*"(.*?)"', content, re.DOTALL)
+        self.assertGreater(len(quotes), 0, "No quotes found in qualitative_examples.md")
+
+        for quote in quotes:
+            quote_clean = quote.replace("\n> ", " ").replace("\n", " ").strip()
+            found = any(quote_clean in turn for turn in all_turns)
+            self.assertTrue(
+                found,
+                f"Quoted text not found verbatim in any transcript:\n{quote_clean[:100]}..."
+            )
+
 
 class TestEndToEndSmoke(unittest.TestCase):
     """Offline end-to-end smoke test executing run_agents.py with fake backend."""

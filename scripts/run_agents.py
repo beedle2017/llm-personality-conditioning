@@ -285,7 +285,7 @@ def main() -> None:
                     r["invalid"] = str(r.get("invalid", "")).lower() == "true"
                     r["score"] = float(r["score"]) if r.get("score") not in ("", None) else None
                     if r.get("condition") == "solo_control":
-                        key = (r["method"], r["trait"], r["level"])
+                        key = (r["method"], r["trait"], r["level"], r.get("task_type", "collaborative"))
                         solo_probes_by_trait_level.setdefault(key, []).append(r)
                     if r.get("checkpoint") == 0 and not r.get("invalid") and r.get("score") is not None:
                         cp0_key = (r["method"], r["trait"], r["level"], r.get("item_id", "item_0"))
@@ -304,7 +304,7 @@ def main() -> None:
                         try:
                             t = json.loads(line)
                             if t.get("condition") == "solo_control":
-                                key = (t["method"], t.get("trait_code", t.get("trait")), t.get("level", 1))
+                                key = (t["method"], t.get("trait_code", t.get("trait")), t.get("level", 1), t.get("task_type", "collaborative"))
                                 solo_transcripts_by_trait_level.setdefault(key, []).append(t)
                         except Exception:
                             pass
@@ -316,7 +316,16 @@ def main() -> None:
     current_loaded_method: str | None = None
 
     for idx, (method, trait, pair_str) in enumerate(configs_to_run):
-        if args.resume and is_config_completed(out_dir, method, trait, pair_str, task_type=args.task_type):
+        levels = [int(x) for x in pair_str.split("-")]
+        lvl_a, lvl_b = levels[0], levels[1]
+
+        config_done = is_config_completed(out_dir, method, trait, pair_str, task_type=args.task_type)
+        missing_solos = [
+            lvl for lvl in (lvl_a, lvl_b)
+            if (method, trait, lvl, args.task_type) not in solo_probes_by_trait_level
+        ]
+
+        if args.resume and config_done and not missing_solos:
             logger.info(f"Skipping already completed config ({idx+1}/{len(configs_to_run)}): {method}-{trait}-{pair_str} (type={args.task_type})")
             completed_count += 1
             continue
@@ -330,9 +339,6 @@ def main() -> None:
 
         t0 = time.time()
         logger.info(f"Running config ({idx+1}/{len(configs_to_run)}): method={method}, trait={trait}, pair={pair_str}, task_type={args.task_type}")
-
-        levels = [int(x) for x in pair_str.split("-")]
-        lvl_a, lvl_b = levels[0], levels[1]
 
         # Select tasks filtered by task_type and tagged with this trait
         available_tasks = all_tasks
@@ -349,47 +355,52 @@ def main() -> None:
         s_vec = steering_vectors.get(trait)
         k_val = cfg.get("steering", {}).get("k_per_trait", {}).get(trait, 4.0)
 
-        # 1. Run interactive dialogues
-        result = run_dialogues(
-            method=method,
-            trait_code=trait,
-            level_a=lvl_a,
-            level_b=lvl_b,
-            tasks=matching_tasks,
-            generator=generator,
-            probe_items=trait_probes,
-            rounds=args.rounds,
-            checkpoints=tuple(args.checkpoints),
-            seed=args.seed + idx * 100,
-            batch_size=batch_size,
-            k=k_val,
-            steering_vector=s_vec,
-            model=hf_model,
-            solo_control=False,
-            positive_control=args.positive_control,
-            cp0_probe_cache=cp0_probe_cache,
-            extraction_cache=extraction_cache,
-            greedy_cache=greedy_cache,
-        )
+        cfg_diag, cfg_probe, cfg_ext = 0.0, 0.0, 0.0
 
-        append_probes_csv(out_dir, result["probes"])
-        append_transcripts_jsonl(out_dir, method, trait, result["transcripts"])
-        all_probes.extend(result["probes"])
-        all_transcripts.extend(result["transcripts"])
+        if not (args.resume and config_done):
+            # 1. Run interactive dialogues
+            result = run_dialogues(
+                method=method,
+                trait_code=trait,
+                level_a=lvl_a,
+                level_b=lvl_b,
+                tasks=matching_tasks,
+                generator=generator,
+                probe_items=trait_probes,
+                rounds=args.rounds,
+                checkpoints=tuple(args.checkpoints),
+                seed=args.seed + idx * 100,
+                batch_size=batch_size,
+                k=k_val,
+                steering_vector=s_vec,
+                model=hf_model,
+                solo_control=False,
+                positive_control=args.positive_control,
+                cp0_probe_cache=cp0_probe_cache,
+                extraction_cache=extraction_cache,
+                greedy_cache=greedy_cache,
+            )
 
-        cfg_timing = result.get("timing", {})
-        cfg_diag = cfg_timing.get("dialogue_time", 0.0)
-        cfg_probe = cfg_timing.get("probe_time", 0.0)
-        cfg_ext = cfg_timing.get("extraction_time", 0.0)
-        cumulative_timing["dialogue_time"] += cfg_diag
-        cumulative_timing["probe_time"] += cfg_probe
-        cumulative_timing["extraction_time"] += cfg_ext
+            append_probes_csv(out_dir, result["probes"])
+            append_transcripts_jsonl(out_dir, method, trait, result["transcripts"])
+            all_probes.extend(result["probes"])
+            all_transcripts.extend(result["transcripts"])
 
-        # 2. Run solo control if not already run for these levels
+            cfg_timing = result.get("timing", {})
+            cfg_diag = cfg_timing.get("dialogue_time", 0.0)
+            cfg_probe = cfg_timing.get("probe_time", 0.0)
+            cfg_ext = cfg_timing.get("extraction_time", 0.0)
+            cumulative_timing["dialogue_time"] += cfg_diag
+            cumulative_timing["probe_time"] += cfg_probe
+            cumulative_timing["extraction_time"] += cfg_ext
+        else:
+            logger.info(f"Interactive dialogues already completed for {method}-{trait}-{pair_str} (type={args.task_type}); proceeding to missing solo controls.")
+
+        # 2. Run solo control if not already run for these levels and task_type
         for lvl in (lvl_a, lvl_b):
-            solo_key = (method, trait, lvl)
+            solo_key = (method, trait, lvl, args.task_type)
             if solo_key not in solo_probes_by_trait_level:
-                logger.info(f"Running solo control for {method}-{trait}-level{lvl}...")
+                logger.info(f"Running solo control for {method}-{trait}-level{lvl} (task_type={args.task_type})...")
                 solo_res = run_dialogues(
                     method=method,
                     trait_code=trait,
@@ -480,16 +491,16 @@ def main() -> None:
         all_disk_transcripts = all_transcripts
 
     # Separate solo controls
-    solo_disk_probes: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
+    solo_disk_probes: dict[tuple[str, str, int, str], list[dict[str, Any]]] = {}
     for p in all_disk_probes:
         if p.get("condition") == "solo_control":
-            key = (p["method"], p["trait"], p["level"])
+            key = (p["method"], p["trait"], p["level"], p.get("task_type", "collaborative"))
             solo_disk_probes.setdefault(key, []).append(p)
 
-    solo_disk_trans: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
+    solo_disk_trans: dict[tuple[str, str, int, str], list[dict[str, Any]]] = {}
     for t in all_disk_transcripts:
         if t.get("condition") == "solo_control":
-            key = (t["method"], t.get("trait_code", t.get("trait")), t.get("level", 1))
+            key = (t["method"], t.get("trait_code", t.get("trait")), t.get("level", 1), t.get("task_type", "collaborative"))
             solo_disk_trans.setdefault(key, []).append(t)
 
     # Group interactive probes by (method, trait, pair, task_type)
@@ -504,8 +515,8 @@ def main() -> None:
     for (m, t, pair_str, tt), p_list in grouped_probes.items():
         levels = [int(x) for x in pair_str.split("-")]
         lvl_a, lvl_b = levels[0], levels[1]
-        solo_p_a = solo_disk_probes.get((m, t, lvl_a), [])
-        solo_p_b = solo_disk_probes.get((m, t, lvl_b), [])
+        solo_p_a = solo_disk_probes.get((m, t, lvl_a, tt), solo_disk_probes.get((m, t, lvl_a, "collaborative"), []))
+        solo_p_b = solo_disk_probes.get((m, t, lvl_b, tt), solo_disk_probes.get((m, t, lvl_b, "collaborative"), []))
         combined_solo = solo_p_a + solo_p_b
 
         pair_transcripts = [
@@ -513,8 +524,8 @@ def main() -> None:
             if tr.get("method") == m and (tr.get("trait_code") == t or tr.get("trait") == t) and tr.get("pair") == pair_str
             and tr.get("task_type", "collaborative") == tt and tr.get("condition") == "interactive"
         ]
-        solo_t_a = solo_disk_trans.get((m, t, lvl_a), [])
-        solo_t_b = solo_disk_trans.get((m, t, lvl_b), [])
+        solo_t_a = solo_disk_trans.get((m, t, lvl_a, tt), solo_disk_trans.get((m, t, lvl_a, "collaborative"), []))
+        solo_t_b = solo_disk_trans.get((m, t, lvl_b, tt), solo_disk_trans.get((m, t, lvl_b, "collaborative"), []))
         combined_solo_trans = solo_t_a + solo_t_b
 
         analysis = analyze_pair_condition(

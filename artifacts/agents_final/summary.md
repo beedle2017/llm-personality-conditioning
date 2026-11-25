@@ -10,8 +10,8 @@
 | prompting | C | 3-3 | collaborative | 0.8 | 0.8 | N/A | PASS | 0.047 [-0.176, 0.250] | -0.080 [-0.143, -0.027] | 0.800 | N/A | **neither** | 0.0% |
 | steering | A | 1-5 | collaborative | 0.6 | 0.8 | WARN (uninformative) | WARN (ceiling-saturated) | 0.000 [ceiling-saturated] | 0.597 [0.345, 0.849] | 2.000 | +0.000 | **linguistic-only** | 0.0% |
 | rewrite | C | 1-5 | collaborative | 0.4 | 0.8 | WARN (uninformative) | PASS | 0.073 [0.000, 0.225] | 0.265 [0.088, 0.492] | 0.800 | +0.300 | **linguistic-only** | 0.0% |
-| prompting | C | 1-5 | disagreement | 0.2 | 1.0 | PASS | PASS | 0.095 [-0.100, 0.300] | 0.336 [0.171, 0.568] | 0.800 | +0.300 | **linguistic-only** | 0.0% |
-| prompting | A | 1-5 | disagreement | 0.6 | 0.8 | WARN (uninformative) | PASS | -0.051 [-0.150, 0.000] | 0.370 [0.149, 0.660] | 0.700 | +0.325 | **linguistic-only** | 0.0% |
+| prompting | C | 1-5 | disagreement | 0.2 | 1.0 | PASS | PASS | 0.095 [-0.100, 0.300] | 0.280 [0.113, 0.499] | 0.800 | +0.300 | **linguistic-only** | 0.0% |
+| prompting | A | 1-5 | disagreement | 0.6 | 0.8 | WARN (uninformative) | PASS | -0.078 [-0.175, 0.000] | 0.125 [-0.076, 0.413] | 0.700 | +0.325 | **neither** | 0.0% |
 
 ## Per-Feature Linguistic Accommodation Breakdown (Style Distance Reduction)
 
@@ -23,8 +23,8 @@
 | prompting | C | 3-3 | collaborative | -0.276 | -0.147 | +0.186 | -0.201 | -0.518 | +0.276 | +0.121 | -0.080 |
 | steering | A | 1-5 | collaborative | +1.042 | -0.081 | +0.649 | +0.590 | +0.036 | +1.605 | +0.339 | +0.597 |
 | rewrite | C | 1-5 | collaborative | +0.009 | -0.385 | +0.826 | +0.052 | +0.122 | +1.075 | +0.159 | +0.265 |
-| prompting | C | 1-5 | disagreement | +0.021 | +0.776 | -0.534 | +0.610 | +0.523 | +1.045 | -0.089 | +0.336 |
-| prompting | A | 1-5 | disagreement | -0.181 | +0.606 | +0.014 | +1.337 | +0.624 | -0.452 | +0.645 | +0.370 |
+| prompting | C | 1-5 | disagreement | -0.171 | +0.489 | -0.617 | -0.040 | +0.323 | +1.045 | +0.929 | +0.280 |
+| prompting | A | 1-5 | disagreement | -0.039 | -0.014 | -1.133 | -0.203 | +0.629 | +0.970 | +0.669 | +0.125 |
 
 ### Interpretation Guide
 - **neither**: No significant shift in either behavioral decisions or linguistic style.
