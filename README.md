@@ -176,3 +176,52 @@ the gated checkpoint requires local Hugging Face access; generation invalid
 checks are lightweight lexical checks; and the implementation assumes the
 standard Llama decoder path `model.model.layers`. BehaviorBench and BFI are
 explicitly not run, so no PIS or BFI numbers are reported.
+
+## Multi-agent experiments
+
+The multi-agent social robustness suite tests whether agents conditioned to different trait levels drift toward each other during multi-turn dialogue, and distinguishes true behavioral drift (shifts in trait-linked choices) from surface linguistic style accommodation.
+
+### Quick start & commands
+
+1. **Offline smoke test (CPU / Fake backend):**
+   ```bash
+   python scripts/run_agents.py --backend fake --smoke --out artifacts/agents_smoke
+   ```
+
+2. **Laptop pilot run (4-bit NF4 on CUDA):**
+   ```bash
+   python scripts/run_agents.py --backend hf --load-4bit --methods prompting \
+     --traits C --pairs 1-5 3-3 --rounds 2 --checkpoints 0 2 --probe-items 5 \
+     --dialogues-per-pair 2 --out artifacts/agents_pilot
+   ```
+
+3. **Full social robustness run:**
+   ```bash
+   python scripts/run_agents.py --backend hf --load-4bit \
+     --methods prompting steering rewrite \
+     --traits C E A --pairs 1-5 1-3 3-5 3-3 5-5 --rounds 8 --checkpoints 0 2 4 8 \
+     --probe-items 10 --dialogues-per-pair 6 --batch-size auto --split development \
+     --seed 20261026 --out artifacts/agents --resume
+   ```
+
+4. **Generate figures:**
+   ```bash
+   python scripts/plot_agents.py --probes artifacts/agents/probes.csv \
+     --summary artifacts/agents/summary.csv --out-dir artifacts/agents/figures
+   ```
+
+### How to read `summary.md`
+
+`artifacts/agents/summary.md` reports metrics and a 2x2 accommodation classification for each (method, trait, pair) condition:
+- **Net Social Shift**: Social shift toward partner $S_{i,k} = d_i \cdot (r_{i,k} - r_{i,0})$ minus the matched non-interactive solo control drift. Reported with 95% bootstrap confidence intervals.
+- **Linguistic Shift**: Standardized composite accommodation score across verbosity, hedges, formality (contractions, pronouns, mean word length), VADER sentiment, and bag-of-words cosine similarity.
+- **2x2 Classification**:
+  - `neither`: Neither net behavioral shift nor linguistic accommodation is statistically significant.
+  - `linguistic-only`: Surface accommodation (style alignment without changing underlying decisions).
+  - `behavioral-only`: Deep drift (agent changes choices toward partner without superficial style accommodation).
+  - `both`: Convergence across both conversational style and behavioral choices.
+- **Validity Checks**: Built-in verification reporting `PASS` or `WARN` for:
+  - *Manipulation Check*: Confirms higher-level agent has significantly higher endorsement at round 0 than lower-level agent (flags `uninformative` if failed).
+  - *Headroom*: Detects ceiling/floor effects ($r_0 \ge 0.95$ or $\le 0.05$ pushed beyond bounds).
+  - *Invalid Rate*: Confirms model answer extraction failure rate is $< 20\%$.
+

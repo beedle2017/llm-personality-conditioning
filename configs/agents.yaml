@@ -1,0 +1,63 @@
+# Multi-agent social robustness experiment configuration
+# Base model: meta-llama/Llama-3.1-8B-Instruct (4-bit NF4)
+
+model_id: "meta-llama/Llama-3.1-8B-Instruct"
+seed: 20261026
+default_split: "development"
+
+# Dialogue settings
+rounds: 6
+checkpoints: [0, 6]
+dialogues_per_pair: 4
+dialogues_per_pair_laptop: 4
+dialogues_per_pair_smoke: 2
+
+# Probe item settings
+probe_items: 5
+probe_items_laptop: 5
+probe_items_smoke: 4
+max_new_tokens_turn: 128
+max_new_tokens_probe: 128
+turn_temperature: 0.7
+probe_temperature: 0.0
+context_token_budget: 2048
+
+# Trait pairs
+opposed_pairs:
+  - [1, 5]
+  - [1, 3]
+  - [3, 5]
+
+null_pairs:
+  - [3, 3]
+  - [5, 5]
+  - [1, 1]
+
+# Primary and exploratory traits
+primary_traits: ["C", "E", "A"]
+exploratory_traits: ["O", "N"]
+
+# Methods
+methods: ["prompting", "steering", "rewrite"]
+
+# BiPO Steering Configuration
+# Evaluated at Layer 15.
+# Calibration summary confirms k=4.0 for all traits (agreeableness test slope: 0.153).
+# Conscientiousness and openness have optional -2 suffix vectors explored in v2 calibration.
+steering:
+  layer: 15
+  default_k: 4.0
+  k_per_trait:
+    A: 4.0
+    C: 4.0
+    E: 4.0
+    O: 4.0
+    N: 4.0
+  vector_paths:
+    A: "artifacts/steering_vectors/bipo/agreeableness.pt"
+    C: "artifacts/steering_vectors/bipo/conscientiousness.pt"
+    C_v2: "artifacts/steering_vectors/bipo/conscientiousness-2.pt"
+    E: "artifacts/steering_vectors/bipo/extraversion.pt"
+    O: "artifacts/steering_vectors/bipo/openness.pt"
+    O_v2: "artifacts/steering_vectors/bipo/openness-2.pt"
+    N: "artifacts/steering_vectors/bipo/neuroticism.pt"
